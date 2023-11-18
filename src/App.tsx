@@ -18,7 +18,7 @@ const App: React.FC = () => {
                     </Button>
                     <Button color="inherit" component={Link} to="/organization/list">
                         団体一覧
-                    </Button>    
+                    </Button>
                 </Toolbar>
             </AppBar>
             <Container>

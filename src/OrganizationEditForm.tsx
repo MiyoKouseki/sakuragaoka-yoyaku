@@ -22,43 +22,43 @@ const OrganizationEditForm: React.FC = () => {
   const [organization, setOrganization] = useState<Organization>({ name: '', representative: '', phone: '' });
 
   useEffect(() => {
-      const fetchOrganizationData = async () => {
-	  if (documentId) {	      
-	      const docRef = doc(db, 'organizations', documentId);
-	      const docSnap = await getDoc(docRef);
-	      if (docSnap.exists()) {
-		  setOrganization(docSnap.data() as Organization);
-	      }
-	  };
+    const fetchOrganizationData = async () => {
+      if (documentId) {
+        const docRef = doc(db, 'organizations', documentId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setOrganization(docSnap.data() as Organization);
+        }
       };
+    };
 
     if (documentId) {
       fetchOrganizationData();
     }
   }, [documentId]);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-	event.preventDefault();
-	const { name, representative, phone } = organization;
-	if (!name || !representative || !phone) {
-	    alert('すべてのフィールドを入力してください。');
-	    return;
-	}
-	
-	try {
-	    if (documentId) {		
-		await setDoc(doc(db, 'organizations', documentId), { name, representative, phone });
-		alert('団体情報が更新されました！');
-	    };
-	} catch (error: unknown) {
-	    let errorMessage = '更新中にエラーが発生しました';
-	    if (error instanceof Error) {
-		errorMessage += ': ' + error.message;
-	    }
-	    alert(errorMessage);
-	}
-    };
-	
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const { name, representative, phone } = organization;
+    if (!name || !representative || !phone) {
+      alert('すべてのフィールドを入力してください。');
+      return;
+    }
+
+    try {
+      if (documentId) {
+        await setDoc(doc(db, 'organizations', documentId), { name, representative, phone });
+        alert('団体情報が更新されました！');
+      };
+    } catch (error: unknown) {
+      let errorMessage = '更新中にエラーが発生しました';
+      if (error instanceof Error) {
+        errorMessage += ': ' + error.message;
+      }
+      alert(errorMessage);
+    }
+  };
+
   return (
     <Container maxWidth="sm">
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
