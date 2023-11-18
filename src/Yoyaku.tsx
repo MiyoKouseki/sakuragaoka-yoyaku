@@ -3,6 +3,7 @@ import { Box, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/mat
 import SimpleCalendar from './SimpleCalendar';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { SelectChangeEvent } from '@mui/material/Select';
+import { Link } from 'react-router-dom';
 
 
 interface Room {
@@ -73,6 +74,11 @@ const Yoyaku: React.FC = () => {
         </FormControl>
         <Button onClick={handleNextWeek}>翌週</Button>
       </Box>
+      <Link to="/yoyaku/register" style={{ textDecoration: 'none' }}>
+          <Button variant="contained" color="primary" style={{ margin: '20px' }}>
+            予約作成
+          </Button>
+        </Link> 
       <SimpleCalendar startDay={weekStart} />
     </Box>
   );

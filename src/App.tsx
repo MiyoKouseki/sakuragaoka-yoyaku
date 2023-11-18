@@ -7,6 +7,8 @@ import RoomForm from './RoomForm';
 import RoomList from './RoomList';
 import RoomEditForm from './RoomEditForm';
 import Yoyaku from './Yoyaku';
+import YoyakuForm from './reservationForm';
+
 import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
 
 const App: React.FC = () => {
@@ -32,6 +34,7 @@ const App: React.FC = () => {
                 <Toolbar /> {/* この行を追加 */}
                 <Routes>
                     <Route path="/yoyaku" element={<Yoyaku />} />
+                    <Route path="/yoyaku/register" element={<YoyakuForm />} />
                     <Route path="/organization/register" element={<OrganizationForm />} />
                     <Route path="/organization/list" element={<OrganizationList />} />
                     <Route path="/organization/edit/:documentId" element={<OrganizationEditForm />} />
