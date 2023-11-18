@@ -11,9 +11,10 @@ const getWeekDay = (date: Date) => {
 
 interface SimpleCalendarProps {
     startDay: Date;
+    roomName: string;
 }
 
-const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay }) => {
+const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName }) => {
     const [selectedCells, setSelectedCells] = useState<{ [key: string]: boolean }>({});
     const [reservations, setReservations] = useState<{ [key: string]: string }>({});
 
@@ -22,8 +23,6 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay }) => {
         return new Date(startDay.getFullYear(), startDay.getMonth(), startDay.getDate() + i);
     });
     const hours = Array.from({ length: 15 }, (_, i) => 8 + i); // 8時から22時まで
-
-
 
     const handleCellClick = (day: Date, hour: number) => {
         const key = `${day.getDate()}-${hour}`;
@@ -44,20 +43,22 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay }) => {
             const fetchedReservations: { [key: string]: string } = {};
             snapshot.docs.forEach(doc => {
                 const data = doc.data();
-                const startDate = new Date(data.startTime);
-                const endDate = new Date(data.endTime);
-                const organizationName = data.organizationName; // 予約団体名を取得
+                if (data.roomName === roomName) { // ここで部屋名をチェック
+                    const startDate = new Date(data.startTime);
+                    const endDate = new Date(data.endTime);
+                    const organizationName = data.organizationName; // 予約団体名を取得
 
-                for (let date = new Date(startDate); date <= endDate; date.setHours(date.getHours() + 1)) {
-                    const key = `${date.getDate()}-${date.getHours()}`;
-                    fetchedReservations[key] = organizationName; // 団体名を保持
+                    for (let date = new Date(startDate); date <= endDate; date.setHours(date.getHours() + 1)) {
+                        const key = `${date.getDate()}-${date.getHours()}`;
+                        fetchedReservations[key] = organizationName; // 団体名を保持
+                    }
                 }
             });
             setReservations(fetchedReservations);
         };
 
         fetchReservations();
-    }, [startDay]);
+    }, [startDay, roomName]);
 
 
     return (

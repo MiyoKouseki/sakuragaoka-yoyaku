@@ -79,7 +79,7 @@ const Yoyaku: React.FC = () => {
             予約作成
           </Button>
         </Link> 
-      <SimpleCalendar startDay={weekStart} />
+      <SimpleCalendar startDay={weekStart} roomName={selectedRoom} />
     </Box>
   );
 };
