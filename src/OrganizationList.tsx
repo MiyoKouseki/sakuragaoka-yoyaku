@@ -1,7 +1,7 @@
 // OrganizationList.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TableSortLabel } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { getFirestore, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
@@ -26,9 +26,16 @@ interface Organization {
     phone: string;
 }
 
+interface SortConfig {
+  key: keyof Organization; // ソートするキー（列名）
+  direction: 'asc' | 'desc'; // 昇順または降順
+}
+
+
 const OrganizationList: React.FC = () => {
     const [organizations, setOrganizations] = useState<Organization[]>([]);
     const navigate = useNavigate();
+    const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'name', direction: 'asc' });
 
     useEffect(() => {
 	const fetchOrganizations = async () => {
@@ -62,6 +69,11 @@ const OrganizationList: React.FC = () => {
     const handleEdit = (docId: string) => {
 	navigate(`/organization/edit/${docId}`);
     };
+
+    const handleSort = (key: keyof Organization) => {
+    const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    setSortConfig({ key, direction });
+  };
     
   return (
     <Container maxWidth="md" style={styles.container}>
@@ -71,14 +83,46 @@ const OrganizationList: React.FC = () => {
         </Typography>
         <TableContainer style={styles.tableContainer} component={Paper}>
           <Table>
-            <TableHead>
-          <TableRow>
-	  <TableCell>ID</TableCell>
-                <TableCell>団体名</TableCell>
-                <TableCell>代表者</TableCell>
-                <TableCell>電話番号</TableCell>
-              </TableRow>
-            </TableHead>
+	  <TableHead>
+	  <TableRow>
+	  <TableCell>
+      <TableSortLabel
+        active={sortConfig.key === 'id'}
+        direction={sortConfig.direction}
+        onClick={() => handleSort('id')}
+      >
+        ID
+      </TableSortLabel>
+	  </TableCell>	  
+          <TableCell>
+          <TableSortLabel
+      active={sortConfig.key === 'name'}
+      direction={sortConfig.direction}
+      onClick={() => handleSort('name')}
+          >
+          団体名
+      </TableSortLabel>
+          </TableCell>
+          <TableCell>
+      <TableSortLabel
+        active={sortConfig.key === 'representative'}
+        direction={sortConfig.direction}
+        onClick={() => handleSort('representative')}
+      >
+        代表者名
+      </TableSortLabel>
+	  </TableCell>
+<TableCell>
+      <TableSortLabel
+        active={sortConfig.key === 'phone'}
+        direction={sortConfig.direction}
+        onClick={() => handleSort('phone')}
+      >
+        電話番号
+      </TableSortLabel>
+    </TableCell>	  
+      </TableRow>
+	  </TableHead>
             <TableBody>
               {organizations.map((org, index) => (
                   <TableRow key={index}>
