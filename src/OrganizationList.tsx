@@ -1,7 +1,9 @@
 // OrganizationList.tsx
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { getFirestore, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 
 const styles = {
@@ -26,7 +28,8 @@ interface Organization {
 
 const OrganizationList: React.FC = () => {
     const [organizations, setOrganizations] = useState<Organization[]>([]);
-    
+    const navigate = useNavigate();
+
     useEffect(() => {
 	const fetchOrganizations = async () => {
 	    try {
@@ -55,6 +58,10 @@ const OrganizationList: React.FC = () => {
 	    alert('削除中にエラーが発生しました。');
 	}
     };
+
+    const handleEdit = (docId: string) => {
+	navigate(`/organization/edit/${docId}`);
+    };
     
   return (
     <Container maxWidth="md" style={styles.container}>
@@ -80,14 +87,20 @@ const OrganizationList: React.FC = () => {
                   <TableCell>{org.representative}</TableCell>
                   <TableCell>{org.phone}</TableCell>
 		  <TableCell>
-		      <IconButton
-    		          aria-label="delete"
-		          onClick={() => handleDelete(org.id)}
-		      >
-		      <DeleteIcon />
-		      </IconButton>
-		  </TableCell>
-                </TableRow>
+                      <IconButton
+                  aria-label="edit"
+                  onClick={() => handleEdit(org.id)}
+                      >
+                      <EditIcon />
+                      </IconButton>
+                      <IconButton
+                  aria-label="delete"
+                  onClick={() => handleDelete(org.id)}
+                      >
+                      <DeleteIcon />
+                      </IconButton>
+                      </TableCell>		      
+                 </TableRow>
               ))}
             </TableBody>
           </Table>
