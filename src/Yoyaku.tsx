@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { Box, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import SimpleCalendar from './SimpleCalendar';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { Link } from 'react-router-dom';
 import { Switch, FormControlLabel } from '@mui/material';
 
 interface Room {
@@ -17,7 +16,6 @@ interface Organization {
 }
 
 const Yoyaku: React.FC = () => {
-  const [weekStart, setWeekStart] = useState(new Date());
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRoom, setSelectedRoom] = useState('');
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -79,18 +77,9 @@ const Yoyaku: React.FC = () => {
     setSelectedOrganization(event.target.value);
   };
 
-  const handleNextWeek = () => {
-    setWeekStart(new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 7));
-  };
-
-  const handleLastWeek = () => {
-    setWeekStart(new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() - 7));
-  };
-
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
       <Box display="flex" alignItems="center">
-        <Button onClick={handleLastWeek}>先週</Button>
         <FormControl>
           <InputLabel>部屋選択</InputLabel>
           <Select
@@ -119,18 +108,12 @@ const Yoyaku: React.FC = () => {
             ))}
           </Select>          
         </FormControl>
-        <Button onClick={handleNextWeek}>翌週</Button>
-      </Box>
-      <Link to="/yoyaku/register" style={{ textDecoration: 'none' }}>
-        <Button variant="contained" color="primary" style={{ margin: '20px' }}>
-          予約作成
-        </Button>
-      </Link>
+      </Box>      
       <FormControlLabel
         control={<Switch checked={editMode} onChange={(e) => setEditMode(e.target.checked)} />}
         label={editMode ? "編集モード" : "閲覧モード"}
       />
-      <SimpleCalendar startDay={weekStart} roomName={selectedRoom} editMode={editMode} organizationName={selectedOrganization}/>
+      <SimpleCalendar roomName={selectedRoom} editMode={editMode} organizationName={selectedOrganization}/>
     </Box>
   );
 };

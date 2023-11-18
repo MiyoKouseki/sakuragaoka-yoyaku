@@ -3,7 +3,9 @@ import { Box, Typography, Tooltip, Button } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { doc, setDoc } from 'firebase/firestore';
 import * as CryptoJS from 'crypto-js';
-
+import KeyboardArrowUpSharpIcon from '@mui/icons-material/KeyboardArrowUpSharp';
+import KeyboardArrowDownSharpIcon from '@mui/icons-material/KeyboardArrowDownSharp';
+import IconButton from '@mui/material/IconButton';
 
 const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 const now = new Date(); // 現在の日時
@@ -13,7 +15,6 @@ const getWeekDay = (date: Date) => {
 };
 
 interface SimpleCalendarProps {
-    startDay: Date;
     roomName: string;
     editMode: Boolean;
     organizationName: string;
@@ -25,16 +26,24 @@ const generateHash = (data: string): string => {
 
 
 
-const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, editMode, organizationName }) => {
-
+const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, organizationName }) => {
+    const [weekStart, setWeekStart] = useState(new Date());
     const [selectedCells, setSelectedCells] = useState<{ [key: string]: boolean }>({});
     const [reservations, setReservations] = useState<{ [key: string]: string }>({});
 
-    const rows = 14;
+    const rows = 7;
     const days = Array.from({ length: rows }, (_, i) => {
-        return new Date(startDay.getFullYear(), startDay.getMonth(), startDay.getDate() + i);
+        return new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + i);
     });
     const hours = Array.from({ length: 15 }, (_, i) => 8 + i); // 8時から22時まで
+
+    const handleNextWeek = () => {
+        setWeekStart(new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 7));
+    };
+
+    const handleLastWeek = () => {
+        setWeekStart(new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() - 7));
+    };
 
     const handleCellClick = (day: Date, hour: number) => {
         if (!editMode) {
@@ -58,7 +67,7 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
         const calculateTimeBlocks = (selectedDates: string[]): { start: Date; end: Date }[] => {
             const times = selectedDates.map(key => {
                 const [date, hour] = key.split("-").map(Number);
-                return new Date(startDay.getFullYear(), startDay.getMonth(), date, hour);
+                return new Date(weekStart.getFullYear(), weekStart.getMonth(), date, hour);
             });
 
             times.sort((a, b) => a.getTime() - b.getTime());
@@ -115,8 +124,6 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
         alert("予約が登録されました");
     };
 
-
-
     useEffect(() => {
         const fetchReservations = async () => {
             const firestore = getFirestore();
@@ -142,16 +149,27 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
         };
 
         fetchReservations();
-    }, [startDay, roomName]);
+    }, [ roomName]);
 
 
     return (
         <Box display="flex" flexDirection="column" maxWidth={1600}>
-            {editMode && (
-                <Button variant="contained" onClick={showSelectedInfo}>ほげ</Button>
-            )}
+            <Button variant="contained" onClick={showSelectedInfo} disabled={!editMode}>予約申請</Button>
             <Box display="flex">
-                <Box width={150} m={0.2} /> {/* 左側の日付のためのスペース */}
+                <Box
+                    width={150}
+                    m={0.2}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <IconButton onClick={handleLastWeek}>
+                        <KeyboardArrowUpSharpIcon
+                            color="inherit"
+                            fontSize="large"
+                        />
+                    </IconButton>
+                </Box>
                 {hours.map(hour => (
                     <Box key={hour} width={40} m={0.2} display="flex" justifyContent="center" alignItems="center">
                         <Typography>{hour}時</Typography>
@@ -202,6 +220,27 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
                     })}
                 </Box>
             ))}
+            <Box display="flex">
+                <Box
+                    width={150}
+                    m={0.2}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <IconButton onClick={handleNextWeek}>
+                        <KeyboardArrowDownSharpIcon
+                            color="inherit"
+                            fontSize="large"
+                        />
+                    </IconButton>
+                </Box>
+                {hours.map(hour => (
+                    <Box key={hour} width={40} m={0.2} display="flex" justifyContent="center" alignItems="center">
+                        <Typography>{hour}時</Typography>
+                    </Box>
+                ))}
+            </Box>
         </Box >
     );
 };
