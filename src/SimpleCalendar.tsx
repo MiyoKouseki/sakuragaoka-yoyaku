@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Tooltip, Button } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
+import * as CryptoJS from 'crypto-js';
+
 
 const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 const now = new Date(); // 現在の日時
@@ -15,6 +18,10 @@ interface SimpleCalendarProps {
     editMode: Boolean;
     organizationName: string;
 }
+
+const generateHash = (data: string): string => {
+    return CryptoJS.SHA256(data).toString();
+};
 
 
 
@@ -41,24 +48,24 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
         return selectedCells[`${day.getDate()}-${hour}`];
     };
 
-    const showSelectedInfo = () => {
+    const showSelectedInfo = async () => {
         const selectedDates = Object.keys(selectedCells).filter(key => selectedCells[key]);
         if (selectedDates.length === 0) {
             alert("選択されたセルがありません");
             return;
         }
-    
+
         const calculateTimeBlocks = (selectedDates: string[]): { start: Date; end: Date }[] => {
             const times = selectedDates.map(key => {
                 const [date, hour] = key.split("-").map(Number);
                 return new Date(startDay.getFullYear(), startDay.getMonth(), date, hour);
             });
-        
+
             times.sort((a, b) => a.getTime() - b.getTime());
-        
+
             const timeBlocks: { start: Date; end: Date }[] = [];
             let currentBlock: { start: Date; end: Date } | null = null;
-        
+
             times.forEach((time: Date) => {
                 if (!currentBlock || time.getTime() !== currentBlock.end.getTime() + 60 * 60 * 1000) {
                     currentBlock = { start: time, end: new Date(time.getTime()) };
@@ -66,21 +73,49 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
                 }
                 currentBlock.end = time;
             });
-        
+
             return timeBlocks;
         };
-        
-        
-        // 連続ブロックの計算
+
+        const registerReservations = async (
+            timeBlocks: { start: Date; end: Date }[],
+            roomName: string,
+            organizationName: string
+        ) => {
+            const firestore = getFirestore();
+
+            for (const block of timeBlocks) {
+                const reservationData = {
+                    roomName,
+                    organizationName,
+                    startTime: timestampToString(block.start),
+                    endTime: timestampToString(block.end)
+                };
+
+                // ドキュメントIDを生成（例: 現在のタイムスタンプを使用）
+                const dataString = JSON.stringify(reservationData);
+                const documentId = generateHash(dataString);
+                //const documentId = `${block.start.getTime()}-${block.end.getTime()}`;
+
+                await setDoc(doc(firestore, 'reservations', documentId), reservationData);
+            }
+        };
+
+        const timestampToString = (timestamp: Date) => {
+            const date = new Date(timestamp); // タイムスタンプからDateオブジェクトを生成
+            const isoString = date.toISOString(); // ISO 8601形式の文字列に変換
+            return isoString//.substring(0, 16); // 秒とミリ秒を除去
+        };
+
         const timeBlocks = calculateTimeBlocks(selectedDates);
-        
-        // 情報を表示
-        const info = timeBlocks.map(block => 
-            `開始時刻: ${block.start}\n終了時刻: ${block.end}`
-        ).join("\n\n");
-        alert(`部屋名: ${roomName}\n団体名: ${organizationName}\n\n${info}`);
+
+        // Firestoreに予約を登録
+        await registerReservations(timeBlocks, roomName, organizationName);
+
+        alert("予約が登録されました");
     };
-    
+
+
 
     useEffect(() => {
         const fetchReservations = async () => {
@@ -93,8 +128,8 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
             snapshot.docs.forEach(doc => {
                 const data = doc.data();
                 if (data.roomName === roomName) { // ここで部屋名をチェック
-                    const startDate = new Date(data.startTime);
-                    const endDate = new Date(data.endTime);
+                    const startDate = new Date(`${data.startTime}`);
+                    const endDate = new Date(`${data.endTime}`);
                     const organizationName = data.organizationName; // 予約団体名を取得
 
                     for (let date = new Date(startDate); date <= endDate; date.setHours(date.getHours() + 1)) {
