@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
-import { createHash } from 'crypto';
+import * as CryptoJS from 'crypto-js';
 import { TextField, Button, Box, Container } from '@mui/material';
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
 import db from './firebaseConfig';
 
-
-
 const generateHash = (data: string): string => {
-  const hash = createHash('sha256');
-  hash.update(data);
-  return hash.digest('hex');
+    const hash = CryptoJS.SHA256(data).toString();
+  return hash;
 };
 
 const OrganizationForm: React.FC = () => {
@@ -33,8 +30,7 @@ const OrganizationForm: React.FC = () => {
 		const orgData = { name, representative, phone };
 		const dataString = JSON.stringify(orgData);
 		const documentId = generateHash(dataString);
-
-		await addDoc(collection(db, 'organizations'), { ...orgData, id: documentId });
+		await setDoc(doc(db, 'organizations', documentId), orgData);
 
 		alert('団体が登録されました！');
 		setName('');

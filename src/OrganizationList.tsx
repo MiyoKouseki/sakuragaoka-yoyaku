@@ -1,9 +1,8 @@
 // OrganizationList.tsx
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { IconButton } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { getFirestore, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 
 const styles = {
   container: {
@@ -19,34 +18,44 @@ const styles = {
 };
 
 interface Organization {
-  name: string;
-  representative: string;
-  phone: string;
+    id: string;
+    name: string;
+    representative: string;
+    phone: string;
 }
 
 const OrganizationList: React.FC = () => {
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+    const [organizations, setOrganizations] = useState<Organization[]>([]);
+    
+    useEffect(() => {
+	const fetchOrganizations = async () => {
+	    try {
+		const firestore = getFirestore();
+		const orgsCollection = collection(firestore, 'organizations');
+		const querySnapshot = await getDocs(orgsCollection);
+		const orgList = querySnapshot.docs.map((doc) => ({
+		    id: doc.id,
+		    ...doc.data()
+		}) as Organization);
+		setOrganizations(orgList);
+	    } catch (error) {
+		console.error('Error fetching organizations:', error);
+	    }
+	};	
+	fetchOrganizations();
+    }, []);
 
-  useEffect(() => {
-    const fetchOrganizations = async () => {
-      try {
-        const firestore = getFirestore();
-        const orgsCollection = collection(firestore, 'organizations');
-        const querySnapshot = await getDocs(orgsCollection);
-        const orgList = querySnapshot.docs.map((doc) => doc.data() as Organization);
-        setOrganizations(orgList);
-      } catch (error) {
-        console.error('Error fetching organizations:', error);
-      }
+    const handleDelete = async (docId: string) => {
+	try {
+	    await deleteDoc(doc(getFirestore(), 'organizations', docId));
+	    setOrganizations(prevOrganizations => prevOrganizations.filter(org => org.id !== docId));
+	    alert('団体が削除されました。');
+	} catch (error) {
+	    console.error('Error deleting organization:', error);
+	    alert('削除中にエラーが発生しました。');
+	}
     };
-
-    fetchOrganizations();
-  }, []);
-
-    const handleDelete = (index: number) => {
-	alert('削除しました');
-    };    
-
+    
   return (
     <Container maxWidth="md" style={styles.container}>
       <Paper elevation={3}>
@@ -56,7 +65,8 @@ const OrganizationList: React.FC = () => {
         <TableContainer style={styles.tableContainer} component={Paper}>
           <Table>
             <TableHead>
-              <TableRow>
+          <TableRow>
+	  <TableCell>ID</TableCell>
                 <TableCell>団体名</TableCell>
                 <TableCell>代表者</TableCell>
                 <TableCell>電話番号</TableCell>
@@ -64,14 +74,15 @@ const OrganizationList: React.FC = () => {
             </TableHead>
             <TableBody>
               {organizations.map((org, index) => (
-                <TableRow key={index}>
+                  <TableRow key={index}>
+		      <TableCell>{org.id.substring(0, 5)}</TableCell>
                   <TableCell>{org.name}</TableCell>
                   <TableCell>{org.representative}</TableCell>
                   <TableCell>{org.phone}</TableCell>
 		  <TableCell>
 		      <IconButton
     		          aria-label="delete"
-		          onClick={() => handleDelete(index)}
+		          onClick={() => handleDelete(org.id)}
 		      >
 		      <DeleteIcon />
 		      </IconButton>
