@@ -1,7 +1,8 @@
 // OrganizationList.tsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TableSortLabel } from '@mui/material';
+import { useNavigate, Link } from 'react-router-dom';
+import { Container, Table, TableBody, TableCell, Button,
+    TableContainer, TableHead, TableRow, Paper, IconButton, TableSortLabel } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { getFirestore, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
@@ -77,10 +78,12 @@ const OrganizationList: React.FC = () => {
 
   return (
     <Container maxWidth="md" style={styles.container}>
-      <Paper elevation={3}>
-        <Typography variant="h4" gutterBottom style={styles.heading}>
-          団体情報一覧
-        </Typography>
+      <Paper elevation={3}>      
+        <Link to="/organization/register" style={{ textDecoration: 'none' }}>
+          <Button variant="contained" color="primary" style={{ margin: '20px' }}>
+            団体追加
+          </Button>
+        </Link> 
         <TableContainer style={styles.tableContainer} component={Paper}>
           <Table>
             <TableHead>

@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import { TextField, Button, Box, Container } from '@mui/material';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import db from './firebaseConfig';
+import { useNavigate } from 'react-router-dom';
+
 
 interface Organization {
   name: string;
@@ -18,6 +20,7 @@ interface RouteParams {
 const OrganizationEditForm: React.FC = () => {
   //const { documentId } = useParams() as RouteParams;
   const { documentId } = useParams<RouteParams>();
+  const navigate = useNavigate();
 
   const [organization, setOrganization] = useState<Organization>({ name: '', representative: '', phone: '' });
 
@@ -40,6 +43,7 @@ const OrganizationEditForm: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { name, representative, phone } = organization;
+  
     if (!name || !representative || !phone) {
       alert('すべてのフィールドを入力してください。');
       return;
@@ -48,7 +52,8 @@ const OrganizationEditForm: React.FC = () => {
     try {
       if (documentId) {
         await setDoc(doc(db, 'organizations', documentId), { name, representative, phone });
-        alert('団体情報が更新されました！');
+        //alert('団体情報が更新されました！');
+        navigate('/organization/list');
       };
     } catch (error: unknown) {
       let errorMessage = '更新中にエラーが発生しました';

@@ -11,11 +11,8 @@ const App: React.FC = () => {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6">
-                        団体管理アプリ
-                    </Typography>
-                    <Button color="inherit" component={Link} to="/organization/register">
-                        団体登録
-                    </Button>
+                        桜ヶ丘体育館予約サイト
+                    </Typography>                    
                     <Button color="inherit" component={Link} to="/organization/list">
                         団体一覧
                     </Button>
