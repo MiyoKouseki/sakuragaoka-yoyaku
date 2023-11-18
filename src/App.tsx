@@ -16,7 +16,7 @@ const App: React.FC = () => {
                 <Toolbar>
                     <Typography variant="h6">
                         桜ヶ丘体育館予約サイト
-                    </Typography>                    
+                    </Typography>
                     <Button color="inherit" component={Link} to="/organization/list">
                         団体一覧
                     </Button>
@@ -24,13 +24,14 @@ const App: React.FC = () => {
                         部屋一覧
                     </Button>
                     <Button color="inherit" component={Link} to="/yoyaku">
-                        予約
+                        予約一覧
                     </Button>
                 </Toolbar>
             </AppBar>
             <Container>
+                <Toolbar /> {/* この行を追加 */}
                 <Routes>
-                    <Route path="/yoyaku" element={<Yoyaku/>} />
+                    <Route path="/yoyaku" element={<Yoyaku />} />
                     <Route path="/organization/register" element={<OrganizationForm />} />
                     <Route path="/organization/list" element={<OrganizationList />} />
                     <Route path="/organization/edit/:documentId" element={<OrganizationEditForm />} />
