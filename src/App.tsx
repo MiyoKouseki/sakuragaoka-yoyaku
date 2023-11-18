@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import OrganizationForm from './OrganizationForm';
 import OrganizationList from './OrganizationList';
 import OrganizationEditForm from './OrganizationEditForm';
+import RoomForm from './RoomForm';
+import RoomList from './RoomList';
+import RoomEditForm from './RoomEditForm';
 import Yoyaku from './Yoyaku';
 import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
 
@@ -17,6 +20,9 @@ const App: React.FC = () => {
                     <Button color="inherit" component={Link} to="/organization/list">
                         団体一覧
                     </Button>
+                    <Button color="inherit" component={Link} to="/rooms/list">
+                        部屋一覧
+                    </Button>
                     <Button color="inherit" component={Link} to="/yoyaku">
                         予約
                     </Button>
@@ -28,6 +34,9 @@ const App: React.FC = () => {
                     <Route path="/organization/register" element={<OrganizationForm />} />
                     <Route path="/organization/list" element={<OrganizationList />} />
                     <Route path="/organization/edit/:documentId" element={<OrganizationEditForm />} />
+                    <Route path="/rooms/register" element={<RoomForm />} />
+                    <Route path="/rooms/list" element={<RoomList />} />
+                    <Route path="/rooms/edit/:documentId" element={<RoomEditForm />} />
                 </Routes>
             </Container>
         </Router>
