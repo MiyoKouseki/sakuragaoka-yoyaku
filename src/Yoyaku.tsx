@@ -11,11 +11,17 @@ interface Room {
   name: string;
   location: string;
 }
+interface Organization {
+  id: string;
+  name: string;
+}
 
 const Yoyaku: React.FC = () => {
   const [weekStart, setWeekStart] = useState(new Date());
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRoom, setSelectedRoom] = useState('');
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [selectedOrganization, setSelectedOrganization] = useState('');
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
@@ -41,10 +47,36 @@ const Yoyaku: React.FC = () => {
       }
     };
     fetchRooms();
+    const fetchOrganizations = async () => {
+      try {
+        const firestore = getFirestore();
+        const organizationsCollection = collection(firestore, 'organizations');
+        const querySnapshot = await getDocs(organizationsCollection);
+        const fetchedOrganizations = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            name: data.name,
+            location: data.location // このプロパティは存在すると仮定しています
+          };
+        });
+        setOrganizations(fetchedOrganizations);
+        if (fetchedOrganizations.length > 0) {
+          setSelectedOrganization(fetchedOrganizations[0].name);
+        }
+      } catch (error) {
+        console.error('Error fetching organizations:', error);
+      }
+    };
+    fetchOrganizations();
   }, []);
 
   const handleRoomChange = (event: SelectChangeEvent<string>) => {
     setSelectedRoom(event.target.value);
+  };
+
+  const handleOrganizationChange = (event: SelectChangeEvent<string>) => {
+    setSelectedOrganization(event.target.value);
   };
 
   const handleNextWeek = () => {
@@ -71,7 +103,21 @@ const Yoyaku: React.FC = () => {
                 {room.name}
               </MenuItem>
             ))}
-          </Select>
+          </Select>          
+        </FormControl>
+        <FormControl>
+          <InputLabel>団体選択</InputLabel>
+          <Select
+            value={selectedOrganization}
+            onChange={handleOrganizationChange}
+            style={{ minWidth: '150px' }}
+          >
+            {organizations.map((organization) => (
+              <MenuItem key={organization.id} value={organization.name}>
+                {organization.name}
+              </MenuItem>
+            ))}
+          </Select>          
         </FormControl>
         <Button onClick={handleNextWeek}>翌週</Button>
       </Box>
@@ -84,7 +130,7 @@ const Yoyaku: React.FC = () => {
         control={<Switch checked={editMode} onChange={(e) => setEditMode(e.target.checked)} />}
         label={editMode ? "編集モード" : "閲覧モード"}
       />
-      <SimpleCalendar startDay={weekStart} roomName={selectedRoom} editMode={editMode}/>
+      <SimpleCalendar startDay={weekStart} roomName={selectedRoom} editMode={editMode} organizationName={selectedOrganization}/>
     </Box>
   );
 };

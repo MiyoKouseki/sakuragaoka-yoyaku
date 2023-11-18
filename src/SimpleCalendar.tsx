@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Tooltip } from '@mui/material';
+import { Box, Typography, Tooltip, Button } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 
 const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
@@ -13,9 +13,12 @@ interface SimpleCalendarProps {
     startDay: Date;
     roomName: string;
     editMode: Boolean;
+    organizationName: string;
 }
 
-const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, editMode }) => {
+
+
+const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, editMode, organizationName }) => {
 
     const [selectedCells, setSelectedCells] = useState<{ [key: string]: boolean }>({});
     const [reservations, setReservations] = useState<{ [key: string]: string }>({});
@@ -37,6 +40,47 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
     const isCellSelected = (day: Date, hour: number) => {
         return selectedCells[`${day.getDate()}-${hour}`];
     };
+
+    const showSelectedInfo = () => {
+        const selectedDates = Object.keys(selectedCells).filter(key => selectedCells[key]);
+        if (selectedDates.length === 0) {
+            alert("選択されたセルがありません");
+            return;
+        }
+    
+        const calculateTimeBlocks = (selectedDates: string[]): { start: Date; end: Date }[] => {
+            const times = selectedDates.map(key => {
+                const [date, hour] = key.split("-").map(Number);
+                return new Date(startDay.getFullYear(), startDay.getMonth(), date, hour);
+            });
+        
+            times.sort((a, b) => a.getTime() - b.getTime());
+        
+            const timeBlocks: { start: Date; end: Date }[] = [];
+            let currentBlock: { start: Date; end: Date } | null = null;
+        
+            times.forEach((time: Date) => {
+                if (!currentBlock || time.getTime() !== currentBlock.end.getTime() + 60 * 60 * 1000) {
+                    currentBlock = { start: time, end: new Date(time.getTime()) };
+                    timeBlocks.push(currentBlock);
+                }
+                currentBlock.end = time;
+            });
+        
+            return timeBlocks;
+        };
+        
+        
+        // 連続ブロックの計算
+        const timeBlocks = calculateTimeBlocks(selectedDates);
+        
+        // 情報を表示
+        const info = timeBlocks.map(block => 
+            `開始時刻: ${block.start}\n終了時刻: ${block.end}`
+        ).join("\n\n");
+        alert(`部屋名: ${roomName}\n団体名: ${organizationName}\n\n${info}`);
+    };
+    
 
     useEffect(() => {
         const fetchReservations = async () => {
@@ -68,6 +112,9 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
 
     return (
         <Box display="flex" flexDirection="column" maxWidth={1600}>
+            {editMode && (
+                <Button variant="contained" onClick={showSelectedInfo}>ほげ</Button>
+            )}
             <Box display="flex">
                 <Box width={150} m={0.2} /> {/* 左側の日付のためのスペース */}
                 {hours.map(hour => (
