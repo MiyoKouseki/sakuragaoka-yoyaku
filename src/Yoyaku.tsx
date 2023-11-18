@@ -4,7 +4,7 @@ import SimpleCalendar from './SimpleCalendar';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { Link } from 'react-router-dom';
-
+import { Switch, FormControlLabel } from '@mui/material';
 
 interface Room {
   id: string;
@@ -16,6 +16,7 @@ const Yoyaku: React.FC = () => {
   const [weekStart, setWeekStart] = useState(new Date());
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRoom, setSelectedRoom] = useState('');
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -75,11 +76,15 @@ const Yoyaku: React.FC = () => {
         <Button onClick={handleNextWeek}>翌週</Button>
       </Box>
       <Link to="/yoyaku/register" style={{ textDecoration: 'none' }}>
-          <Button variant="contained" color="primary" style={{ margin: '20px' }}>
-            予約作成
-          </Button>
-        </Link> 
-      <SimpleCalendar startDay={weekStart} roomName={selectedRoom} />
+        <Button variant="contained" color="primary" style={{ margin: '20px' }}>
+          予約作成
+        </Button>
+      </Link>
+      <FormControlLabel
+        control={<Switch checked={editMode} onChange={(e) => setEditMode(e.target.checked)} />}
+        label={editMode ? "編集モード" : "閲覧モード"}
+      />
+      <SimpleCalendar startDay={weekStart} roomName={selectedRoom} editMode={editMode}/>
     </Box>
   );
 };

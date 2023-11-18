@@ -12,9 +12,11 @@ const getWeekDay = (date: Date) => {
 interface SimpleCalendarProps {
     startDay: Date;
     roomName: string;
+    editMode: Boolean;
 }
 
-const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName }) => {
+const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, editMode }) => {
+
     const [selectedCells, setSelectedCells] = useState<{ [key: string]: boolean }>({});
     const [reservations, setReservations] = useState<{ [key: string]: string }>({});
 
@@ -87,31 +89,34 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName }) =
                         <Typography style={{ width: '30%', textAlign: 'right' }}>{`${day.getDate()}日`}</Typography>
                         <Typography style={{ width: '40%', textAlign: 'center' }}>{`(${getWeekDay(day)})`}</Typography>
                     </Box>
-                    {hours.map(hour => (
-                        <Tooltip key={`${day.getDate()}-${hour}`} title={`${reservations[`${day.getDate()}-${hour}`] || ''}`} placement="top">
-                            <Box
-                                key={`${day.getDate()}-${hour}`}
-                                width={40}
-                                height={30}
-                                bgcolor={
-                                    reservations[`${day.getDate()}-${hour}`]
-                                        ? 'pink' // 予約されているセル
-                                        : isCellSelected(day, hour)
-                                            ? (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'rgba(144, 238, 144, 0.5)' : 'lightgreen')
-                                            : (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'darkgrey' : 'lightgrey')
-                                }
-                                m={0.2}
-                                display="flex"
-                                justifyContent="center"
-                                alignItems="center"
-                                onClick={() => handleCellClick(day, hour)}
-                                style={{ cursor: 'pointer' }}
-                            />
-                        </Tooltip>
-                    ))}
+                    {hours.map(hour => {
+                        const key = `${day.getDate()}-${hour}`;
+                        const tooltipTitle = editMode ? '' : (reservations[key] || '');
+                        return (
+                            <Tooltip key={key} title={tooltipTitle} placement="top">
+                                <Box
+                                    key={`${day.getDate()}-${hour}`}
+                                    width={40}
+                                    height={30}
+                                    bgcolor={
+                                        reservations[`${day.getDate()}-${hour}`]
+                                            ? 'pink' // 予約されているセル
+                                            : isCellSelected(day, hour)
+                                                ? (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'rgba(144, 238, 144, 0.5)' : 'lightgreen')
+                                                : (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'darkgrey' : 'lightgrey')
+                                    }
+                                    m={0.2}
+                                    display="flex"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    onClick={() => handleCellClick(day, hour)}
+                                    style={{ cursor: 'pointer' }}
+                                />
+                            </Tooltip>
+                        );
+                    })}
                 </Box>
-            ))
-            }
+            ))}
         </Box >
     );
 };
