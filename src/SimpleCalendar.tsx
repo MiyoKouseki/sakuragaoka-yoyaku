@@ -27,6 +27,9 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay, roomName, edi
     const hours = Array.from({ length: 15 }, (_, i) => 8 + i); // 8時から22時まで
 
     const handleCellClick = (day: Date, hour: number) => {
+        if (!editMode) {
+            return;
+        }
         const key = `${day.getDate()}-${hour}`;
         setSelectedCells(prev => ({ ...prev, [key]: !prev[key] }));
     };
