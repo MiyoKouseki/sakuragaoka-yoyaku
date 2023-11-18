@@ -24,7 +24,6 @@ interface Room {
   id: string;
   name: string;
   location: string;
-  phone: string;
 }
 
 interface SortConfig {
