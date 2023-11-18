@@ -17,7 +17,7 @@ const Yoyaku: React.FC = () => {
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
       <Box display="flex" alignItems="center">
         <Button onClick={handleLastWeek}>先週</Button>
-        <Typography variant="h4" style={{ margin: '20px 0' }}>12月</Typography>
+        <Typography variant="h4" style={{ margin: '20px 0' }}>部屋A</Typography>
         <Button onClick={handleNextWeek}>翌週</Button>
       </Box>
       <SimpleCalendar startDay={weekStart} />
