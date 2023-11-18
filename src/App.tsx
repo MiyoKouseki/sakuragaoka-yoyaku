@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import OrganizationForm from './OrganizationForm';
 import OrganizationList from './OrganizationList';
 import OrganizationEditForm from './OrganizationEditForm';
+import Yoyaku from './Yoyaku';
 import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
 
 const App: React.FC = () => {
@@ -16,10 +17,14 @@ const App: React.FC = () => {
                     <Button color="inherit" component={Link} to="/organization/list">
                         団体一覧
                     </Button>
+                    <Button color="inherit" component={Link} to="/yoyaku">
+                        予約
+                    </Button>
                 </Toolbar>
             </AppBar>
             <Container>
                 <Routes>
+                    <Route path="/yoyaku" element={<Yoyaku/>} />
                     <Route path="/organization/register" element={<OrganizationForm />} />
                     <Route path="/organization/list" element={<OrganizationList />} />
                     <Route path="/organization/edit/:documentId" element={<OrganizationEditForm />} />
