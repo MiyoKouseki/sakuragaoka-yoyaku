@@ -3,6 +3,7 @@ import { Box, Typography, Tooltip } from '@mui/material';
 
 
 const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
+const now = new Date(); // 現在の日時
 
 const getWeekDay = (date: Date) => {
     return weekDays[date.getDay()];
@@ -62,7 +63,11 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay }) => {
                                 key={`${day.getDate()}-${hour}`}
                                 width={40}
                                 height={30}
-                                bgcolor={isCellSelected(day, hour) ? 'lightgreen' : 'grey.300'}
+                                bgcolor={
+                                    isCellSelected(day, hour)
+                                        ? (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'rgba(144, 238, 144, 0.5)' : 'lightgreen')
+                                        : (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'darkgrey' : 'lightgrey')
+                                }
                                 m={0.2}
                                 display="flex"
                                 justifyContent="center"
