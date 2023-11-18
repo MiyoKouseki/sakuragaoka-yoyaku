@@ -38,7 +38,9 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, org
     const hours = Array.from({ length: 15 }, (_, i) => 8 + i); // 8時から22時まで
 
     const handleNextWeek = () => {
+        console.log(weekStart)
         setWeekStart(new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 7));
+        console.log(weekStart)
     };
 
     const handleLastWeek = () => {
@@ -151,6 +153,9 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, org
         fetchReservations();
     }, [ roomName]);
 
+    const formatDateTime = (day: Date, hour: number) => {
+        return `${day.getFullYear()}/${day.getMonth() + 1}/${day.getDate()} ${hour}:00`;
+    };
 
     return (
         <Box display="flex" flexDirection="column" maxWidth={1600}>
@@ -194,7 +199,8 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, org
                     </Box>
                     {hours.map(hour => {
                         const key = `${day.getDate()}-${hour}`;
-                        const tooltipTitle = editMode ? '' : (reservations[key] || '');
+                        const reservationInfo = reservations[key] ? `${reservations[key]} - ${formatDateTime(day, hour)}` : '';
+                        const tooltipTitle = editMode ? '' : reservationInfo;
                         return (
                             <Tooltip key={key} title={tooltipTitle} placement="top">
                                 <Box
@@ -205,8 +211,8 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, org
                                         reservations[`${day.getDate()}-${hour}`]
                                             ? 'pink' // 予約されているセル
                                             : isCellSelected(day, hour)
-                                                ? (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'rgba(144, 238, 144, 0.5)' : 'lightgreen')
-                                                : (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'darkgrey' : 'lightgrey')
+                                                ? (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'rgba(144, 238, 144, 0.5)' : 'yellow')
+                                                : (day < now || (day.getDate() === now.getDate() && hour < now.getHours()) ? 'darkgrey' : 'lightgreen')
                                     }
                                     m={0.2}
                                     display="flex"
