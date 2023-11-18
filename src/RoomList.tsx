@@ -136,7 +136,6 @@ const RoomList: React.FC = () => {
                   <TableCell>{org.id.substring(0, 5)}</TableCell>
                   <TableCell>{org.name}</TableCell>
                   <TableCell>{org.location}</TableCell>
-                  <TableCell>{org.phone}</TableCell>
                   <TableCell>
                     <IconButton
                       aria-label="edit"
