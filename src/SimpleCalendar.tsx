@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Tooltip } from '@mui/material';
+
 
 const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -56,22 +57,25 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay }) => {
                         <Typography style={{ width: '40%', textAlign: 'center' }}>{`(${getWeekDay(day)})`}</Typography>
                     </Box>
                     {hours.map(hour => (
-                        <Box
-                            key={`${day.getDate()}-${hour}`}
-                            width={40}
-                            height={30}
-                            bgcolor={isCellSelected(day, hour) ? 'lightgreen' : 'grey.300'}
-                            m={0.2}
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                            onClick={() => handleCellClick(day, hour)}
-                            style={{ cursor: 'pointer' }}
-                        />
+                        <Tooltip key={`${day.getDate()}-${hour}`} title={`${day.getMonth() + 1}月${day.getDate()}日 ${hour}時`} placement="top">
+                            <Box
+                                key={`${day.getDate()}-${hour}`}
+                                width={40}
+                                height={30}
+                                bgcolor={isCellSelected(day, hour) ? 'lightgreen' : 'grey.300'}
+                                m={0.2}
+                                display="flex"
+                                justifyContent="center"
+                                alignItems="center"
+                                onClick={() => handleCellClick(day, hour)}
+                                style={{ cursor: 'pointer' }}
+                            />
+                        </Tooltip>
                     ))}
                 </Box>
-            ))}
-        </Box>
+            ))
+            }
+        </Box >
     );
 };
 
