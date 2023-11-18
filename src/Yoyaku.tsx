@@ -3,7 +3,7 @@ import { Box, Typography, Button } from '@mui/material';
 import SimpleCalendar from './SimpleCalendar';
 
 const Yoyaku: React.FC = () => {
-  const [weekStart, setWeekStart] = useState(new Date(2022, 11, 1)); // 2022年12月1日から開始
+  const [weekStart, setWeekStart] = useState(new Date()); // 2022年12月1日から開始
 
   const handleNextWeek = () => {
     setWeekStart(new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 7));
