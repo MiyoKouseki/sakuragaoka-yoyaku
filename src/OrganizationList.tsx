@@ -32,6 +32,18 @@ interface SortConfig {
   direction: 'asc' | 'desc'; // 昇順または降順
 }
 
+const sortOrganizations = (orgs: Organization[], { key, direction }: SortConfig): Organization[] => {
+  return orgs.sort((a, b) => {
+    if (a[key] < b[key]) {
+      return direction === 'asc' ? -1 : 1;
+    }
+    if (a[key] > b[key]) {
+      return direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+};
+
 
 const OrganizationList: React.FC = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -48,13 +60,14 @@ const OrganizationList: React.FC = () => {
           id: doc.id,
           ...doc.data()
         }) as Organization);
-        setOrganizations(orgList);
+        const sortedOrgs = sortOrganizations(orgList, sortConfig);
+        setOrganizations(sortedOrgs);
       } catch (error) {
         console.error('Error fetching organizations:', error);
       }
     };
     fetchOrganizations();
-  }, []);
+  }, [sortConfig]);
 
   const handleDelete = async (docId: string) => {
     try {
@@ -72,9 +85,10 @@ const OrganizationList: React.FC = () => {
   };
 
   const handleSort = (key: keyof Organization) => {
-    const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
-    setSortConfig({ key, direction });
-  };
+    const direction: 'asc' | 'desc' = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    const newSortConfig = { key, direction };
+    setSortConfig(newSortConfig);
+   };
 
   return (
     <Container maxWidth="md" style={styles.container}>
