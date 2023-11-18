@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 
+
 const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 
 const getWeekDay = (day: number) => {
@@ -8,11 +9,18 @@ const getWeekDay = (day: number) => {
     return weekDays[date.getDay()];
 };
 
-const SimpleCalendar: React.FC = () => {
+interface SimpleCalendarProps {
+    startDay: Date;
+}
+
+const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ startDay }) => {
     const [selectedCells, setSelectedCells] = useState<{ [key: string]: boolean }>({});
 
     const rows = 14;
-    const days = Array.from({ length: rows }, (_, i) => i + 1); // 1日から14日まで
+    const days = Array.from({ length: rows }, (_, i) => {
+        const day = new Date(startDay.getFullYear(), startDay.getMonth(), startDay.getDate() + i);
+        return day.getDate(); // 日付の部分だけを返す
+    });
     const hours = Array.from({ length: 15 }, (_, i) => 8 + i); // 8時から22時まで
 
     const handleCellClick = (day: number, hour: number) => {
