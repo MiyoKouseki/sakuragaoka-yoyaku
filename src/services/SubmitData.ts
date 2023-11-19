@@ -1,5 +1,5 @@
 // submitData.ts
-import { doc, setDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import { generateHash } from '../utils/generateHash';
 
@@ -19,13 +19,25 @@ const submitData = async <T extends { [key: string]: any }>({
 }: SubmitDataParams<T>): Promise<void> => {
   if (!validateData(data)) {
     return;
+  } else {
+    console.log('invalid data');
   }
 
   try {
-    const documentId = generateHash(JSON.stringify(data));
-    if (documentId) {
-      await setDoc(doc(db, collectionName, documentId), data);
-      navigate(navigatePath);
+    const orgQuery = query(collection(db, collectionName), where('name', '==', data.name));
+    const querySnapshot = await getDocs(orgQuery);
+    if (!querySnapshot.empty) {
+      alert('この団体名は既に使用されています。');
+    }
+    else {
+      const documentId = generateHash(JSON.stringify(data));
+      if (documentId) {
+        await setDoc(doc(db, collectionName, documentId), data);
+        navigate(navigatePath);
+      }
+      else {
+        console.error('no document id.');
+      }
     }
   } catch (error) {
     console.error('Error submitting data:', error);
