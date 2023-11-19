@@ -4,6 +4,7 @@ import SimpleCalendar from './SimpleCalendar';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { Switch, FormControlLabel } from '@mui/material';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Room {
   id: string;
@@ -21,7 +22,8 @@ const Yoyaku: React.FC = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [selectedOrganization, setSelectedOrganization] = useState('');
   const [editMode, setEditMode] = useState(false);
-
+  const { user } = useAuth();
+ 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
@@ -33,7 +35,7 @@ const Yoyaku: React.FC = () => {
           return {
             id: doc.id,
             name: data.name,
-            location: data.location // このプロパティは存在すると仮定しています
+            location: data.location
           };
         });
         setRooms(fetchedRooms);
@@ -44,7 +46,7 @@ const Yoyaku: React.FC = () => {
         console.error('Error fetching rooms:', error);
       }
     };
-    fetchRooms();
+
     const fetchOrganizations = async () => {
       try {
         const firestore = getFirestore();
@@ -66,8 +68,12 @@ const Yoyaku: React.FC = () => {
         console.error('Error fetching organizations:', error);
       }
     };
-    fetchOrganizations();
-  }, []);
+
+    if (user) {
+      fetchRooms();
+      fetchOrganizations();
+    }
+  }, [user]);
 
   const handleRoomChange = (event: SelectChangeEvent<string>) => {
     setSelectedRoom(event.target.value);
@@ -77,13 +83,14 @@ const Yoyaku: React.FC = () => {
     setSelectedOrganization(event.target.value);
   };
 
+
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
       <Box display="flex" alignItems="center">
         <FormControl>
           <InputLabel>部屋選択</InputLabel>
           <Select
-            value={selectedRoom}
+            value={selectedRoom || ''}
             onChange={handleRoomChange}
             style={{ minWidth: '150px' }}
           >
@@ -92,12 +99,12 @@ const Yoyaku: React.FC = () => {
                 {room.name}
               </MenuItem>
             ))}
-          </Select>          
+          </Select>
         </FormControl>
         <FormControl>
           <InputLabel>団体選択</InputLabel>
           <Select
-            value={selectedOrganization}
+            value={selectedOrganization || ''}
             onChange={handleOrganizationChange}
             style={{ minWidth: '150px' }}
           >
@@ -106,14 +113,14 @@ const Yoyaku: React.FC = () => {
                 {organization.name}
               </MenuItem>
             ))}
-          </Select>          
+          </Select>
         </FormControl>
-      </Box>      
+      </Box>
       <FormControlLabel
         control={<Switch checked={editMode} onChange={(e) => setEditMode(e.target.checked)} />}
         label={editMode ? "編集モード" : "閲覧モード"}
       />
-      <SimpleCalendar roomName={selectedRoom} editMode={editMode} organizationName={selectedOrganization}/>
+      <SimpleCalendar roomName={selectedRoom} editMode={editMode} organizationName={selectedOrganization} />
     </Box>
   );
 };

@@ -5,6 +5,7 @@ import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import NavigationBar from './components/NavigationBar';
 import AppRoutes from './components/AppRoutes';
+import { AuthProvider } from './contexts/AuthContext';
 
 const theme = createTheme({
     palette: {
@@ -18,11 +19,13 @@ const App: React.FC = () => {
     return (
         <ThemeProvider theme={theme}>
             <Router>
-                < NavigationBar />
-                <Container>
-                    <Toolbar />
-                    <AppRoutes />
-                </Container>
+                <AuthProvider>
+                    < NavigationBar />
+                    <Container>
+                        <Toolbar />
+                        <AppRoutes />
+                    </Container>
+                </AuthProvider>
             </Router>
         </ThemeProvider>
     );

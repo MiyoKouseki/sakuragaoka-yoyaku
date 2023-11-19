@@ -9,6 +9,8 @@ import OrganizationEditForm from './OrganizationEditForm';
 import RoomRegisterForm from './RoomRegisterForm';
 import RoomList from './RoomList';
 import RoomEditForm from './RoomEditForm';
+import LoginPage from './LoginPage';
+//import FrontPage from './FrontPage';
 
 const AppRoutes: React.FC = () => {
     return (
@@ -21,6 +23,7 @@ const AppRoutes: React.FC = () => {
             <Route path="/rooms/register" element={<RoomRegisterForm />} />
             <Route path="/rooms/list" element={<RoomList />} />
             <Route path="/rooms/edit/:documentId" element={<RoomEditForm />} />
+            <Route path="/login" element={<LoginPage/>} />
             {/* 他のルート */}
         </Routes>
     );

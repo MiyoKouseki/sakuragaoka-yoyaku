@@ -1,6 +1,6 @@
 //EditData.ts
 import { doc, setDoc } from 'firebase/firestore';
-import db from '../firebaseConfig';
+import { db } from '../firebaseConfig';
 
 interface EditDataParams<T> {
   collectionName: string;

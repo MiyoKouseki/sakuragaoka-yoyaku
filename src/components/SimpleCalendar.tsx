@@ -7,6 +7,7 @@ import KeyboardArrowUpSharpIcon from '@mui/icons-material/KeyboardArrowUpSharp';
 import KeyboardArrowDownSharpIcon from '@mui/icons-material/KeyboardArrowDownSharp';
 import IconButton from '@mui/material/IconButton';
 import Legend from './Legend';
+import { useAuth } from '../contexts/AuthContext';
 
 const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 const now = new Date(); // 現在の日時
@@ -31,6 +32,7 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, org
     const [weekStart, setWeekStart] = useState(new Date());
     const [selectedCells, setSelectedCells] = useState<{ [key: string]: boolean }>({});
     const [reservations, setReservations] = useState<{ [key: string]: string }>({});
+    const { user } = useAuth();
 
     const rows = 7;
     const days = Array.from({ length: rows }, (_, i) => {
@@ -150,9 +152,10 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, org
             });
             setReservations(fetchedReservations);
         };
-
-        fetchReservations();
-    }, [roomName]);
+        if (user) {
+            fetchReservations();
+        }
+    }, [roomName, user]);
 
     const formatDateTime = (day: Date, hour: number) => {
         return `${day.getFullYear()}/${day.getMonth() + 1}/${day.getDate()} ${hour}:00`;

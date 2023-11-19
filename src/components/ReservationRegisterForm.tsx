@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Container } from '@mui/material';
 import { setDoc, doc } from 'firebase/firestore';
-import db from '../firebaseConfig';
+import { db } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
@@ -45,7 +45,7 @@ const ReservationRegisterForm: React.FC = () => {
             alert(errorMessage);
         }
     };
-    
+
     useEffect(() => {
         const fetchRoomsAndOrganizations = async () => {
             const firestore = getFirestore();
@@ -73,7 +73,7 @@ const ReservationRegisterForm: React.FC = () => {
                 <FormControl fullWidth margin="normal">
                     <InputLabel>部屋名</InputLabel>
                     <Select
-                        value={roomName}
+                        value={roomName || ''}
                         label="部屋名"
                         onChange={(e) => setRoomName(e.target.value as string)}
                     >

@@ -1,6 +1,6 @@
 // submitData.ts
 import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
-import db from '../firebaseConfig';
+import { db } from '../firebaseConfig';
 import { generateHash } from '../utils/generateHash';
 
 interface SubmitDataParams<T> {

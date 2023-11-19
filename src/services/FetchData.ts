@@ -1,6 +1,6 @@
 //FetchData.ts
 import { doc, getDoc } from 'firebase/firestore';
-import db from '../firebaseConfig';
+import { db } from '../firebaseConfig';
 
 const FetchData = async <T>(
     collectionName: string,
