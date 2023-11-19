@@ -14,20 +14,18 @@ const OrganizationRegisterForm: React.FC = () => {
   const [organization, setOrganization] = useState<Organization>({ name: '', representative: '', phone: '' });
   const navigate = useNavigate();
 
-  const submitOrganization = async (organization: Organization) => {
-    const { name, representative, phone } = organization;
-    
+  const submitOrganization = async (organization: Organization) => {    
     if (!validateOrganizationData(organization)) {
       return; 
     }
 
     try {
-      const orgQuery = query(collection(db, 'organizations'), where('name', '==', name));
+      const orgQuery = query(collection(db, 'organizations'), where('name', '==', organization.name));
       const querySnapshot = await getDocs(orgQuery);
       if (!querySnapshot.empty) {
         alert('この団体名は既に使用されています。');
       } else {
-        const orgData = { name, representative, phone };
+        const orgData = { ...organization };
         const dataString = JSON.stringify(orgData);
         const documentId = generateHash(dataString);
         await setDoc(doc(db, 'organizations', documentId), orgData);

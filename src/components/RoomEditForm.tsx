@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Container } from '@mui/material';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import RoomFormFields from './RoomFormFields';
 import { Room } from '../interfaces/Room';
 import { validateRoomData } from '../validations/validateRoomData';
-
+import { handleSubmitLogicRoom } from '../hooks/handleSubmitLogic';
+import submitData from '../services/SubmitData';
 
 interface RouteParams {
   [key: string]: string | undefined;
@@ -36,26 +37,24 @@ const RoomEditForm: React.FC = () => {
     }
   }, [documentId]);
 
+  const submitRoom = async (organization: Room): Promise<void> => {
+    await submitData<Room>({
+      collectionName: 'rooms',
+      data: organization,
+      validateData: validateRoomData,
+      navigate,
+      navigatePath: '/rooms/list'
+    });
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const { name, location } = room;
-
-    if (!validateRoomData(room)) {
-      return; 
-    }
-
-    try {
-      if (documentId) {
-        await setDoc(doc(db, 'rooms', documentId), { name, location });
-        navigate('/rooms/list');
-      };
-    } catch (error: unknown) {
-      let errorMessage = '更新中にエラーが発生しました';
-      if (error instanceof Error) {
-        errorMessage += ': ' + error.message;
-      }
-      alert(errorMessage);
-    }
+    handleSubmitLogicRoom(
+      room,
+      submitRoom,
+      () => navigate('/rooms/list'), // 成功時の処理
+      (errorMessage: string) => alert(errorMessage) // エラー時の処理
+    );
   };
 
   return (

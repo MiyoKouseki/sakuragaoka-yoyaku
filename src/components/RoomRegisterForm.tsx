@@ -12,7 +12,6 @@ import { handleSubmitLogicRoom } from '../hooks/handleSubmitLogic';
 
 const RoomRegisterForm: React.FC = () => {
   const [room, setRoom] = useState<Room>({ name: '', location: '' });
-  const { name, location } = room;
   const navigate = useNavigate();
 
   const submitRoom = async (room: Room) => {
@@ -21,13 +20,13 @@ const RoomRegisterForm: React.FC = () => {
     }
 
     try {
-      const roomQuery = query(collection(db, 'rooms'), where('name', '==', name));
+      const roomQuery = query(collection(db, 'rooms'), where('name', '==', room.name));
       const querySnapshot = await getDocs(roomQuery);
 
       if (!querySnapshot.empty) {
         alert('この部屋名は既に使用されています。');
       } else {
-        const roomData = { name, location };
+        const roomData = { ...room };
         const dataString = JSON.stringify(roomData);
         const documentId = generateHash(dataString);
         await setDoc(doc(db, 'rooms', documentId), roomData);

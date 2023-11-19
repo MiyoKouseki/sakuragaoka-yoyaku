@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Container } from '@mui/material';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import OrganizationFormFields from './OrganizationFormFields';
 import { handleSubmitLogicOrganization } from '../hooks/handleSubmitLogic';
 import { validateOrganizationData } from '../validations/validateOrganizationData';
 import { Organization } from '../interfaces/Organization';
+import submitData from '../services/SubmitData';
 
 
 interface RouteParams {
@@ -37,26 +38,15 @@ const OrganizationEditForm: React.FC = () => {
     }
   }, [documentId]);
 
-  const submitOrganization = async (organization: Organization) => {
-    const { name, representative, phone } = organization;
-
-    if (!validateOrganizationData(organization)) {
-      return; 
-    }
-
-    try {
-      if (documentId) {
-        await setDoc(doc(db, 'organizations', documentId), { name, representative, phone });
-        navigate('/organization/list');
-      };
-    } catch (error: unknown) {
-      let errorMessage = '更新中にエラーが発生しました';
-      if (error instanceof Error) {
-        errorMessage += ': ' + error.message;
-      }
-      alert(errorMessage);
-    }
-  }
+  const submitOrganization = async (organization: Organization): Promise<void> => {
+    await submitData<Organization>({
+      collectionName: 'organizations',
+      data: organization,
+      validateData: validateOrganizationData,
+      navigate,
+      navigatePath: '/organizations/list'
+    });
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
