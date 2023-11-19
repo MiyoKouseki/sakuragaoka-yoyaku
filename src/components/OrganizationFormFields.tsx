@@ -1,13 +1,13 @@
-// OrganizationFormFields.tsx
+// entityFormFields.tsx
 import { TextField, Button } from '@mui/material';
 import { Organization } from '../interfaces/Organization';
 
-interface OrganizationFormFieldsProps {
-    organization: Organization;
-    setOrganization: React.Dispatch<React.SetStateAction<Organization>>;
+interface FormFieldsProps<T> {
+    entity: T;
+    setEntity: React.Dispatch<React.SetStateAction<T>>;
 }
 
-const OrganizationFormFields: React.FC<OrganizationFormFieldsProps> = ({ organization, setOrganization }) => {
+const entityFormFields: React.FC<FormFieldsProps<Organization>> = ({ entity, setEntity }) => {
     return (
         <>
             <TextField
@@ -17,8 +17,8 @@ const OrganizationFormFields: React.FC<OrganizationFormFieldsProps> = ({ organiz
                 id="name"
                 label="団体名"
                 name="name"
-                value={organization.name}
-                onChange={(e) => setOrganization({ ...organization, name: e.target.value })}
+                value={entity.name}
+                onChange={(e) => setEntity({ ...entity, name: e.target.value })}
             />
             <TextField
                 margin="normal"
@@ -27,8 +27,8 @@ const OrganizationFormFields: React.FC<OrganizationFormFieldsProps> = ({ organiz
                 id="representative"
                 label="代表者名"
                 name="representative"
-                value={organization.representative}
-                onChange={(e) => setOrganization({ ...organization, representative: e.target.value })}
+                value={entity.representative}
+                onChange={(e) => setEntity({ ...entity, representative: e.target.value })}
             />
             <TextField
                 margin="normal"
@@ -37,8 +37,8 @@ const OrganizationFormFields: React.FC<OrganizationFormFieldsProps> = ({ organiz
                 id="phone"
                 label="代表者電話番号"
                 name="phone"
-                value={organization.phone}
-                onChange={(e) => setOrganization({ ...organization, phone: e.target.value })}
+                value={entity.phone}
+                onChange={(e) => setEntity({ ...entity, phone: e.target.value })}
             />
             <Button
                 type="submit"
@@ -53,4 +53,4 @@ const OrganizationFormFields: React.FC<OrganizationFormFieldsProps> = ({ organiz
     );
 };
 
-export default OrganizationFormFields;
+export default entityFormFields;

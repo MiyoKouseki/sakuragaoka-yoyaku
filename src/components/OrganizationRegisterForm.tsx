@@ -54,8 +54,8 @@ const OrganizationRegisterForm: React.FC = () => {
     <Container maxWidth="sm">
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
         <OrganizationFormFields
-          organization={organization}
-          setOrganization={setOrganization}
+          entity={organization}
+          setEntity={setOrganization}
         />
       </Box>
     </Container>
