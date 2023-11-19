@@ -3,11 +3,11 @@ import React, { useState } from 'react';
 import { Box, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import OrganizationFormFields from './OrganizationFormFields';
-import { handleSubmitLogic } from '../hooks/handleSubmitLogic';
+import { handleSubmitLogicOrganization } from '../hooks/handleSubmitLogic';
 import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import { validateOrganizationData } from '../validations/validateOrganizationData';
-import { Organization } from '../interfaces/Organization';
+import { Organization } from '../interfaces/Entity';
 import { generateHash } from '../utils/generateHash';
 
 const OrganizationRegisterForm: React.FC = () => {
@@ -44,7 +44,7 @@ const OrganizationRegisterForm: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleSubmitLogic(
+    handleSubmitLogicOrganization(
       organization,
       submitOrganization,
       () => navigate('/organization/list'), // 成功時の処理

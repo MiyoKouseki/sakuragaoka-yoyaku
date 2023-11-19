@@ -6,7 +6,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import OrganizationFormFields from './OrganizationFormFields';
-import { handleSubmitLogic } from '../hooks/handleSubmitLogic';
+import { handleSubmitLogicOrganization } from '../hooks/handleSubmitLogic';
 import { validateOrganizationData } from '../validations/validateOrganizationData';
 import { Organization } from '../interfaces/Organization';
 
@@ -60,7 +60,7 @@ const OrganizationEditForm: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleSubmitLogic(
+    handleSubmitLogicOrganization(
       organization,
       submitOrganization,
       () => navigate('/organization/list'), // 成功時の処理

@@ -6,7 +6,7 @@ import YoyakuForm from './ReservationRegisterForm';
 import OrganizationForm from './OrganizationRegisterForm';
 import OrganizationList from './OrganizationList';
 import OrganizationEditForm from './OrganizationEditForm';
-import RoomForm from './RoomForm';
+import RoomRegisterForm from './RoomRegisterForm';
 import RoomList from './RoomList';
 import RoomEditForm from './RoomEditForm';
 
@@ -18,7 +18,7 @@ const AppRoutes: React.FC = () => {
             <Route path="/organization/register" element={<OrganizationForm />} />
             <Route path="/organization/list" element={<OrganizationList />} />
             <Route path="/organization/edit/:documentId" element={<OrganizationEditForm />} />
-            <Route path="/rooms/register" element={<RoomForm />} />
+            <Route path="/rooms/register" element={<RoomRegisterForm />} />
             <Route path="/rooms/list" element={<RoomList />} />
             <Route path="/rooms/edit/:documentId" element={<RoomEditForm />} />
             {/* 他のルート */}

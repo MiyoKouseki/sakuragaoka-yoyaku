@@ -1,18 +1,14 @@
 // ReservationRegisterForm.tsx
 import React, { useEffect, useState } from 'react';
-import * as CryptoJS from 'crypto-js';
 import { TextField, Button, Box, Container } from '@mui/material';
 import { setDoc, doc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { generateHash } from '../utils/generateHash';
 
-const generateHash = (data: string): string => {
-    return CryptoJS.SHA256(data).toString();
-};
-
-const ReservationForm: React.FC = () => {
+const ReservationRegisterForm: React.FC = () => {
     const [rooms, setRooms] = useState<{ id: string, name: string }[]>([]);
     const [organizations, setOrganizations] = useState<{ id: string, name: string }[]>([]);
 
@@ -49,7 +45,7 @@ const ReservationForm: React.FC = () => {
             alert(errorMessage);
         }
     };
-
+    
     useEffect(() => {
         const fetchRoomsAndOrganizations = async () => {
             const firestore = getFirestore();
@@ -88,7 +84,6 @@ const ReservationForm: React.FC = () => {
                         ))}
                     </Select>
                 </FormControl>
-
                 <FormControl fullWidth margin="normal">
                     <InputLabel>予約団体名</InputLabel>
                     <Select
@@ -140,4 +135,4 @@ const ReservationForm: React.FC = () => {
     );
 };
 
-export default ReservationForm;
+export default ReservationRegisterForm;
