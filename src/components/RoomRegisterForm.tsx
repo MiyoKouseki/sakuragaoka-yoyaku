@@ -53,7 +53,10 @@ const RoomRegisterForm: React.FC = () => {
   return (
     <Container maxWidth="sm">
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-        <RoomFormFields room={room} setRoom={setRoom} />
+        <RoomFormFields
+          entity={room}
+          setEntity={setRoom}
+        />
       </Box>
     </Container>
   );

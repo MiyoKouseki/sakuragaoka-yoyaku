@@ -1,14 +1,14 @@
 // src/components/RoomFormFields.tsx
 import React from 'react';
 import { Button, TextField } from '@mui/material';
-import { Room } from '../interfaces/Entity';
+import { Room } from '../interfaces/Room';
 
-interface RoomFormFieldsProps {
-    room: Room;
-    setRoom: (room: Room) => void;
+interface FormFieldsProps<T> {
+    entity: T;
+    setEntity: React.Dispatch<React.SetStateAction<T>>;
 }
 
-const RoomFormFields: React.FC<RoomFormFieldsProps> = ({ room, setRoom }) => {
+const EntityFormFields: React.FC<FormFieldsProps<Room>> = ({ entity, setEntity }) => {
     return (
         <>
             <TextField
@@ -18,8 +18,8 @@ const RoomFormFields: React.FC<RoomFormFieldsProps> = ({ room, setRoom }) => {
                 id="name"
                 label="部屋名"
                 name="name"
-                value={room.name}
-                onChange={(e) => setRoom({ ...room, name: e.target.value })}
+                value={entity.name}
+                onChange={(e) => setEntity({ ...entity, name: e.target.value })}
             />
             <TextField
                 margin="normal"
@@ -28,8 +28,8 @@ const RoomFormFields: React.FC<RoomFormFieldsProps> = ({ room, setRoom }) => {
                 id="location"
                 label="所在地"
                 name="location"
-                value={room.location}
-                onChange={(e) => setRoom({ ...room, location: e.target.value })}
+                value={entity.location}
+                onChange={(e) => setEntity({ ...entity, location: e.target.value })}
             />
             <Button
                 type="submit"
@@ -44,4 +44,4 @@ const RoomFormFields: React.FC<RoomFormFieldsProps> = ({ room, setRoom }) => {
     );
 };
 
-export default RoomFormFields;
+export default EntityFormFields;
