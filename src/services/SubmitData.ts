@@ -10,7 +10,7 @@ interface SubmitDataParams<T> {
   navigate: (path: string) => void;
   navigatePath: string;
 }
-const submitData = async <T extends { [key: string]: any }>({
+const SubmitData = async <T extends { [key: string]: any }>({
   collectionName,
   data,
   validateData,
@@ -44,4 +44,4 @@ const submitData = async <T extends { [key: string]: any }>({
   }
 };
 
-export default submitData;
+export default SubmitData;

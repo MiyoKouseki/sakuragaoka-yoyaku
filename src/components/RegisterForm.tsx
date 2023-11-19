@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Box, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import submitData from '../services/SubmitData';
+import SubmitData from '../services/SubmitData';
 
 interface RegisterFormProps<T extends { [key: string]: any }> {
     defaultEntity: T;
@@ -28,7 +28,7 @@ function RegisterForm<T extends { [key: string]: any }>({
     const [entity, setEntity] = useState<T>(defaultEntity);
 
     const RegisterEntity = async (entity: T): Promise<void> => {
-        await submitData<T>({
+        await SubmitData<T>({
             collectionName,
             data: entity,
             validateData,
