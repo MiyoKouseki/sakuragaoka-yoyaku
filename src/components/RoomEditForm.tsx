@@ -2,14 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Container } from '@mui/material';
-import { doc, getDoc } from 'firebase/firestore';
-import db from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import RoomFormFields from './RoomFormFields';
 import { Room } from '../interfaces/Room';
 import { validateRoomData } from '../validations/validateRoomData';
 import { handleSubmitLogicRoom } from '../hooks/handleSubmitLogic';
 import submitData from '../services/SubmitData';
+import FetchData from '../services/FetchData';
 
 interface RouteParams {
   [key: string]: string | undefined;
@@ -22,20 +21,9 @@ const RoomEditForm: React.FC = () => {
   const [room, setRoom] = useState<Room>({ name: '', location: '' });
 
   useEffect(() => {
-    const fetchRoomData = async () => {
-      if (documentId) {
-        const docRef = doc(db, 'rooms', documentId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setRoom(docSnap.data() as Room);
-        }
-      };
-    };
-
-    if (documentId) {
-      fetchRoomData();
-    }
+    FetchData<Room>('rooms', documentId, setRoom);
   }, [documentId]);
+
 
   const submitRoom = async (organization: Room): Promise<void> => {
     await submitData<Room>({
