@@ -6,7 +6,7 @@ import * as CryptoJS from 'crypto-js';
 import KeyboardArrowUpSharpIcon from '@mui/icons-material/KeyboardArrowUpSharp';
 import KeyboardArrowDownSharpIcon from '@mui/icons-material/KeyboardArrowDownSharp';
 import IconButton from '@mui/material/IconButton';
-import Legend from './Legend';
+import Legend from '../Legend';
 
 const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 const now = new Date(); // 現在の日時

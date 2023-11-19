@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { TextField, Button, Box, Container } from '@mui/material';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import db from './firebaseConfig';
+import db from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 
 

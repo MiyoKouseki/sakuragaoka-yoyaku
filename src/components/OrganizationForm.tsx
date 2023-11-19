@@ -1,9 +1,9 @@
-//RoomForm.tsx
+//OrganizationForm.tsx
 import React, { useState } from 'react';
 import * as CryptoJS from 'crypto-js';
 import { TextField, Button, Box, Container } from '@mui/material';
 import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
-import db from './firebaseConfig';
+import db from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 
 const generateHash = (data: string): string => {
@@ -11,33 +11,35 @@ const generateHash = (data: string): string => {
   return hash;
 };
 
-const RoomForm: React.FC = () => {
+const OrganizationForm: React.FC = () => {
   const [name, setName] = useState<string>('');
-  const [location, setLocation] = useState<string>(''); // 所在地の状態
+  const [representative, setRepresentative] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!name || !location) {
+    if (!name || !representative || !phone) {
       alert('すべてのフィールドを入力してください。');
       return;
     }
-    
     try {
-      const roomQuery = query(collection(db, 'rooms'), where('name', '==', name));
-      const querySnapshot = await getDocs(roomQuery);
+      const orgQuery = query(collection(db, 'organizations'), where('name', '==', name));
+      const querySnapshot = await getDocs(orgQuery);
 
       if (!querySnapshot.empty) {
-        alert('この部屋名は既に使用されています。');
+        alert('この団体名は既に使用されています。');
       } else {
-        const roomData = { name, location };
-        const dataString = JSON.stringify(roomData);
+        const orgData = { name, representative, phone };
+        const dataString = JSON.stringify(orgData);
         const documentId = generateHash(dataString);
-        await setDoc(doc(db, 'rooms', documentId), roomData);
+        await setDoc(doc(db, 'organizations', documentId), orgData);
 
+        //alert('団体が登録されました！');
         setName('');
-        setLocation('');
-        navigate('/rooms/list'); // 適切なリダイレクト先に変更
+        setRepresentative('');
+        setPhone('');
+        navigate('/organization/list');
       }
     } catch (error: unknown) {
       let errorMessage = '登録中にエラーが発生しました';
@@ -56,7 +58,7 @@ const RoomForm: React.FC = () => {
           required
           fullWidth
           id="name"
-          label="部屋名"
+          label="団体名"
           name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -65,11 +67,21 @@ const RoomForm: React.FC = () => {
           margin="normal"
           required
           fullWidth
-          id="location"
-          label="所在地"
-          name="location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          id="representative"
+          label="代表者名"
+          name="representative"
+          value={representative}
+          onChange={(e) => setRepresentative(e.target.value)}
+        />
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="phone"
+          label="代表者電話番号"
+          name="phone"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
         />
         <Button
           type="submit"
@@ -84,4 +96,4 @@ const RoomForm: React.FC = () => {
   );
 };
 
-export default RoomForm;
+export default OrganizationForm;

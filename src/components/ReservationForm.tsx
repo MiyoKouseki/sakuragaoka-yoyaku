@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import * as CryptoJS from 'crypto-js';
 import { TextField, Button, Box, Container } from '@mui/material';
 import { setDoc, doc } from 'firebase/firestore';
-import db from './firebaseConfig';
+import db from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
