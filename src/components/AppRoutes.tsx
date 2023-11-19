@@ -2,8 +2,8 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Yoyaku from './Yoyaku';
-import YoyakuForm from './ReservationForm';
-import OrganizationForm from './OrganizationForm';
+import YoyakuForm from './ReservationRegisterForm';
+import OrganizationForm from './OrganizationRegisterForm';
 import OrganizationList from './OrganizationList';
 import OrganizationEditForm from './OrganizationEditForm';
 import RoomForm from './RoomForm';

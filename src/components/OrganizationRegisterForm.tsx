@@ -1,62 +1,46 @@
-//OrganizationEditForm.tsx
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+//OrganizationRegisterForm.tsx
+import React, { useState } from 'react';
 import { Box, Container } from '@mui/material';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import db from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import OrganizationFormFields from './OrganizationFormFields';
 import { handleSubmitLogic } from '../hooks/handleSubmitLogic';
+import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
+import db from '../firebaseConfig';
 import { validateOrganizationData } from '../validations/validateOrganizationData';
 import { Organization } from '../interfaces/Organization';
+import { generateHash } from '../utils/generateHash';
 
-
-interface RouteParams {
-  [key: string]: string | undefined;
-}
-
-const OrganizationEditForm: React.FC = () => {
-  const { documentId } = useParams<RouteParams>();
-  const navigate = useNavigate();
-
+const OrganizationRegisterForm: React.FC = () => {
   const [organization, setOrganization] = useState<Organization>({ name: '', representative: '', phone: '' });
-
-  useEffect(() => {
-    const fetchOrganizationData = async () => {
-      if (documentId) {
-        const docRef = doc(db, 'organizations', documentId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setOrganization(docSnap.data() as Organization);
-        }
-      };
-    };
-
-    if (documentId) {
-      fetchOrganizationData();
-    }
-  }, [documentId]);
+  const navigate = useNavigate();
 
   const submitOrganization = async (organization: Organization) => {
     const { name, representative, phone } = organization;
-
+    
     if (!validateOrganizationData(organization)) {
       return; 
     }
 
     try {
-      if (documentId) {
-        await setDoc(doc(db, 'organizations', documentId), { name, representative, phone });
-        navigate('/organization/list');
-      };
+      const orgQuery = query(collection(db, 'organizations'), where('name', '==', name));
+      const querySnapshot = await getDocs(orgQuery);
+      if (!querySnapshot.empty) {
+        alert('この団体名は既に使用されています。');
+      } else {
+        const orgData = { name, representative, phone };
+        const dataString = JSON.stringify(orgData);
+        const documentId = generateHash(dataString);
+        await setDoc(doc(db, 'organizations', documentId), orgData);
+        setOrganization({ name: '', representative: '', phone: '' });
+      }
     } catch (error: unknown) {
-      let errorMessage = '更新中にエラーが発生しました';
+      let errorMessage = '登録中にエラーが発生しました';
       if (error instanceof Error) {
         errorMessage += ': ' + error.message;
       }
       alert(errorMessage);
     }
-  }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -80,4 +64,4 @@ const OrganizationEditForm: React.FC = () => {
   );
 };
 
-export default OrganizationEditForm;
+export default OrganizationRegisterForm;
