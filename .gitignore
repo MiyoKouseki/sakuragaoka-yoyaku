@@ -24,3 +24,6 @@ yarn-error.log*
 
 firebaseConfig.ts
 .firebase
+static
+asset-manifest.json
+public_firebase
