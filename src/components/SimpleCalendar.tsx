@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Tooltip, Button } from '@mui/material';
+import { Box, Typography, Tooltip, Button, useMediaQuery } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { doc, setDoc } from 'firebase/firestore';
 import * as CryptoJS from 'crypto-js';
@@ -25,8 +25,6 @@ interface SimpleCalendarProps {
 const generateHash = (data: string): string => {
     return CryptoJS.SHA256(data).toString();
 };
-
-
 
 const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, organizationName }) => {
     const [weekStart, setWeekStart] = useState(new Date());
@@ -160,13 +158,19 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, org
     const formatDateTime = (day: Date, hour: number) => {
         return `${day.getFullYear()}/${day.getMonth() + 1}/${day.getDate()} ${hour}:00`;
     };
+    const isSmallScreen = useMediaQuery('(max-width:800px)');
 
+    if (isSmallScreen) {
+        // 画面サイズが800px以下の場合のレンダリング
+        return <Typography>画面サイズが小さすぎます</Typography>;
+    }
+    
     return (
-        <Box display="flex" flexDirection="column" maxWidth={1600}>
+        <Box display="flex" flexDirection="column">
             <Button variant="contained" onClick={showSelectedInfo} disabled={!editMode}>予約申請</Button>
             <Box display="flex">
                 <Box
-                    width={150}
+                    width='20%'
                     m={0.2}
                     display="flex"
                     justifyContent="center"
@@ -190,7 +194,7 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, org
                     <Box
                         key={day.getDate()}
                         display="flex"
-                        width={150}
+                        width='20%'
                         m={0.2}
                         justifyContent="flex-start"
                         alignItems="center"
@@ -232,7 +236,7 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ roomName, editMode, org
             ))}
             <Box display="flex">
                 <Box
-                    width={150}
+                    width='20%'
                     m={0.2}
                     display="flex"
                     justifyContent="center"
