@@ -6,6 +6,9 @@ import CustomTable from './CustomTable';
 import sortData from '../utils/sortData';
 import CommonListContainer from './CommonListContainer';
 import { Timestamp } from 'firebase/firestore';
+import { Button, Typography } from '@mui/material';
+import Stack from '@mui/material/Stack';
+
 
 interface Reservation {
     id: string;
@@ -27,6 +30,27 @@ const ReservationList: React.FC = () => {
     const [sortedReservations, setSortedReservations] = useState<Reservation[]>([]);
     const navigate = useNavigate();
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'roomName', direction: 'asc' });
+    const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
+
+    const rooms = Array.from(new Set(reservations.map(reservation => reservation.roomName)));
+
+    useEffect(() => {
+        const filteredReservations = selectedRooms.length > 0
+            ? reservations.filter(reservation => selectedRooms.includes(reservation.roomName))
+            : []; // selectedRooms が空の場合は空の配列を設定
+    
+        setSortedReservations(sortData(filteredReservations, sortConfig));
+    }, [reservations, sortConfig, selectedRooms]);    
+
+    const handleRoomSelection = (roomName: string) => {
+        setSelectedRooms(prevSelectedRooms => {
+            if (prevSelectedRooms.includes(roomName)) {
+                return prevSelectedRooms.filter(r => r !== roomName);
+            } else {
+                return [...prevSelectedRooms, roomName];
+            }
+        });
+    };
 
     const columns = [
         {
@@ -87,6 +111,30 @@ const ReservationList: React.FC = () => {
             onAddButtonClick={() => navigate('/reservations/register')}
             addButtonPath="/reservations/register"
         >
+            <Stack direction="row" spacing={1} alignItems="center">
+                <Typography sx={{ marginRight: 2 }}>
+                    部屋
+                </Typography>
+                {rooms.map((roomName) => (
+                    <Button
+                        key={roomName}
+                        onClick={() => handleRoomSelection(roomName)}
+                        color={selectedRooms.includes(roomName) ? "primary" : "primary"}
+                        variant={selectedRooms.includes(roomName) ? "contained" : "outlined"}
+                        sx={{
+                            padding: '2px 8px', // パディングを小さくする
+                            fontSize: '0.875rem', // フォントサイズを小さくする
+                            lineHeight: 1.25, // 行の高さを調整する
+                            minWidth: 0, // 最小幅を無効にする
+                            minHeight: 0, // 最小高さを無効にする
+                            borderRadius: '4px',
+                            boxShadow: 'none'
+                        }}
+                    >
+                        {roomName}
+                    </Button>
+                ))}
+            </Stack>
             <CustomTable
                 data={sortedReservations}
                 columns={columns}
