@@ -1,13 +1,22 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Toolbar, Container } from '@mui/material';
-import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import NavigationBar from './components/NavigationBar';
 import AppRoutes from './components/AppRoutes';
 import { AuthProvider } from './contexts/AuthContext';
+import { createTheme, Theme } from '@mui/material/styles';
 
-const theme = createTheme({
+const theme: Theme = createTheme({
+    breakpoints: {
+        values: {
+            xs: 0,
+            sm: 600,
+            md: 960,
+            lg: 1280,
+            xl: 1920,
+        },
+    },
     palette: {
         primary: {
             main: '#FFB6C1', // 桜の色に合わせたピンク
