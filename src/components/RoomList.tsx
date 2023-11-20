@@ -1,23 +1,10 @@
 // RoomList.tsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Container, Button, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import useFirestoreCollection from '../hooks/useFirestoreCollection';
 import CustomTable from './CustomTable';
 import sortData from '../utils/sortData';
-
-const styles = {
-  container: {
-    padding: '20px',
-    marginTop: '20px',
-  },
-  heading: {
-    marginBottom: '20px',
-  },
-  tableContainer: {
-    marginTop: '20px',
-  },
-};
+import CommonListContainer from './CommonListContainer';
 
 interface Room {
   id: string;
@@ -67,23 +54,20 @@ const RoomList: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="md" style={styles.container}>
-      <Paper elevation={3}>
-        <Link to="/rooms/register" style={{ textDecoration: 'none' }}>
-          <Button variant="contained" color="primary" style={{ margin: '20px' }}>
-            部屋追加
-          </Button>
-        </Link>
-        <CustomTable
-          data={sortedRooms}
-          columns={columns}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          sortConfig={sortConfig}
-          onSort={handleSort}
-        />
-      </Paper>
-    </Container>
+    <CommonListContainer
+      addButtonLabel="部屋追加"
+      onAddButtonClick={() => navigate('/rooms/register')}
+      addButtonPath="/rooms/register"
+    >
+      <CustomTable
+        data={sortedRooms}
+        columns={columns}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        sortConfig={sortConfig}
+        onSort={handleSort}
+      />
+    </CommonListContainer>
   );
 };
 

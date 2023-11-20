@@ -1,23 +1,11 @@
 // OrganizationList.tsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Container, Button, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import useFirestoreCollection from '../hooks/useFirestoreCollection';
 import CustomTable from './CustomTable';
 import sortData from '../utils/sortData';
+import CommonListContainer from './CommonListContainer';
 
-const styles = {
-  container: {
-    padding: '20px',
-    marginTop: '20px',
-  },
-  heading: {
-    marginBottom: '20px',
-  },
-  tableContainer: {
-    marginTop: '20px',
-  },
-};
 
 interface Organization {
   id: string;
@@ -69,23 +57,21 @@ const OrganizationList: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="md" style={styles.container}>
-      <Paper elevation={3}>
-        <Link to="/organization/register" style={{ textDecoration: 'none' }}>
-          <Button variant="contained" color="primary" style={{ margin: '20px' }}>
-            団体追加
-          </Button>
-        </Link>
-        <CustomTable
-          data={sortedOrganizations}
-          columns={columns}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          sortConfig={sortConfig}
-          onSort={handleSort}
-        />
-      </Paper>
-    </Container>
+    <CommonListContainer
+      addButtonLabel="団体追加"
+      onAddButtonClick={() => navigate('/organization/register')}
+      addButtonPath="/organization/register"
+    >
+      <CustomTable
+        data={sortedOrganizations}
+        columns={columns}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        sortConfig={sortConfig}
+        onSort={handleSort}
+      />
+    </CommonListContainer>
+
   );
 };
 
