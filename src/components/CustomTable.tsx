@@ -1,5 +1,4 @@
 // CustomTable.tsx
-import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TableSortLabel } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -29,7 +28,12 @@ const CustomTable = <T extends { id: string }>({ data, columns, onEdit, onDelete
             <TableHead>
                 <TableRow>
                     {columns.map((column) => (
-                        <TableCell key={column.id.toString()}>
+                        <TableCell
+                            key={column.id.toString()}
+                            style={{
+                                display: column.id === 'id' || column.id === 'phone' ? 'none' : 'table-cell'
+                            }}
+                        >
                             {column.sortable ? (
                                 <TableSortLabel
                                     active={sortConfig.key === column.id}
@@ -50,7 +54,12 @@ const CustomTable = <T extends { id: string }>({ data, columns, onEdit, onDelete
                 {data.map((item) => (
                     <TableRow key={item.id}>
                         {columns.map((column) => (
-                            <TableCell key={column.id.toString()}>
+                            <TableCell
+                                key={column.id.toString()}
+                                style={{
+                                    display: column.id === 'id' || column.id === 'phone' ? 'none' : 'table-cell'
+                                }}
+                            >
                                 {column.format
                                     ? column.format(item[column.id])
                                     : item[column.id] != null
