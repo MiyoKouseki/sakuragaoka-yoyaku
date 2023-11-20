@@ -3,6 +3,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Yoyaku from './Yoyaku';
 import YoyakuForm from './ReservationRegisterForm';
+import ReservationList from './ReservationList';
 import OrganizationForm from './OrganizationRegisterForm';
 import OrganizationList from './OrganizationList';
 import OrganizationEditForm from './OrganizationEditForm';
@@ -16,7 +17,8 @@ const AppRoutes: React.FC = () => {
     return (
         <Routes>
             <Route path="/" element={<Yoyaku />} />
-            <Route path="/yoyaku/register" element={<YoyakuForm />} />
+            <Route path="/reservations/register" element={<YoyakuForm />} />
+            <Route path="/reservations/list" element={<ReservationList />} />
             <Route path="/organization/register" element={<OrganizationForm />} />
             <Route path="/organization/list" element={<OrganizationList />} />
             <Route path="/organization/edit/:documentId" element={<OrganizationEditForm />} />

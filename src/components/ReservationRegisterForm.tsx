@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { generateHash } from '../utils/generateHash';
+import { Timestamp } from 'firebase/firestore';
 
 const ReservationRegisterForm: React.FC = () => {
     const [rooms, setRooms] = useState<{ id: string, name: string }[]>([]);
@@ -26,7 +27,8 @@ const ReservationRegisterForm: React.FC = () => {
         }
 
         try {
-            const reservationData = { roomName, organizationName, startTime, endTime };
+            const createdTime = Timestamp.now();
+            const reservationData = { roomName, organizationName, startTime, endTime, createdTime };
             const dataString = JSON.stringify(reservationData);
             const documentId = generateHash(dataString);
 
