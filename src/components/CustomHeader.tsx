@@ -1,41 +1,65 @@
 // CustomHeader.tsx
-
 import React from 'react';
-import { ToolbarProps, View } from 'react-big-calendar';
+import { ToolbarProps } from 'react-big-calendar';
+import { useMediaQuery, Button, Grid, IconButton } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import TodayIcon from '@mui/icons-material/Today';
 
-const viewNames: Partial<Record<View, string>> = {
-    month: '月',
-    week: '週',
-    day: '日',
-    agenda: '予定表',
-    // 他のビュー名も必要に応じて追加
-};
+const CustomHeader: React.FC<ToolbarProps> = ({ label, onNavigate, onView, view }) => {
+    const isSmallScreen = useMediaQuery('(max-width:800px)');
 
-const CustomHeader: React.FC<ToolbarProps> = ({ label, onNavigate, onView, view, views }) => {
+    const getButtonStyle = (buttonView: string) => ({
+        borderColor: 'black', // これで常にボーダー色を黒に設定します
+        color: 'black', // これで常に文字色を黒に設定します
+        backgroundColor: view === buttonView ? '#f0f0f0' : '',
+        '&:hover': {
+            borderColor: 'black', // ホバー時もボーダー色を黒に保持します
+            backgroundColor: view === buttonView ? '#e0e0e0' : '',
+        },
+    });
+
     return (
-        <div className="rbc-toolbar">
-            <span className="rbc-btn-group">
-                <button type="button" onClick={() => onNavigate('PREV')}>前</button>
-                <button type="button" onClick={() => onNavigate('TODAY')}>今日</button>
-                <button type="button" onClick={() => onNavigate('NEXT')}>次</button>
-            </span>
-            <span className="rbc-toolbar-label">{label}</span>
-            <span className="rbc-btn-group">
-                {Object.keys(views).map((key: string) => {
-                    const viewTitle = viewNames[key as View] || key; // フォールバックとしてキー自体を使用
-                    return (
-                        <button
-                            type="button"
-                            key={key}
-                            onClick={() => onView(key as View)}
-                            className={view === key ? 'rbc-active' : ''}
+        <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
+            <Grid item>
+                <IconButton onClick={() => onNavigate('PREV')}>
+                    <ChevronLeftIcon />
+                </IconButton>
+                <IconButton onClick={() => onNavigate('TODAY')}>
+                    <TodayIcon />
+                </IconButton>
+                <IconButton onClick={() => onNavigate('NEXT')}>
+                    <ChevronRightIcon />
+                </IconButton>
+            </Grid>
+
+            <Grid item xs>
+                <div style={{ textAlign: 'center', flexGrow: 1 }}>
+                    {label} 日
+                </div>
+            </Grid>
+
+            <Grid item>
+                {!isSmallScreen && (
+                    <>
+                        <Button
+                            variant="outlined"
+                            sx={getButtonStyle('week')}
+                            onClick={() => onView('week')}
                         >
-                            {viewTitle}
-                        </button>
-                    );
-                })}
-            </span>
-        </div>
+                            週
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            sx={getButtonStyle('agenda')}
+                            onClick={() => onView('agenda')}
+                        >
+                            予定リスト
+                        </Button>
+                    </>
+                )}
+            </Grid>
+        </Grid>
     );
 };
 
