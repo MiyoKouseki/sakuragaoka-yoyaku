@@ -1,0 +1,6 @@
+
+/* 現在時刻の線のスタイルをカスタマイズ */
+.rbc-today .rbc-current-time-indicator {
+    height: 3px; /* 線の太さを太くする */
+    background-color: rgb(0, 255, 149); /* 線の色を赤にする（任意で変更可） */
+  }

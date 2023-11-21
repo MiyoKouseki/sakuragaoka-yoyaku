@@ -1,7 +1,7 @@
 //AppRoutes.tsx
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Yoyaku from './Yoyaku';
+import YoyakuPage from './YoyakuPage';
 import YoyakuForm from './ReservationRegisterForm';
 import ReservationList from './ReservationList';
 import OrganizationForm from './OrganizationRegisterForm';
@@ -16,7 +16,7 @@ import LoginPage from './LoginPage';
 const AppRoutes: React.FC = () => {
     return (
         <Routes>
-            <Route path="/" element={<Yoyaku />} />
+            <Route path="/" element={<YoyakuPage />} />
             <Route path="/reservations/register" element={<YoyakuForm />} />
             <Route path="/reservations/list" element={<ReservationList />} />
             <Route path="/organization/register" element={<OrganizationForm />} />
