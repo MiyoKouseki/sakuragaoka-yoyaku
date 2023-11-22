@@ -37,14 +37,19 @@ const EventCalendar: React.FC = () => {
 
   // リファクタリングされた非同期データフェッチ関数
   const fetchEvents = useCallback(async () => {
-    const fetchedReservations = await fetchCollectionData<Reservation>('reservations');
-    const mappedEvents = fetchedReservations.map((reservation) => ({
-      ...reservation,
-      start: new Date(reservation.startTime),
-      end: new Date(reservation.endTime),
-      title: `${reservation.organizationName} - ${reservation.roomName}`,
-    }));
-    setEvents(mappedEvents);
+    try {
+      const fetchedReservations = await fetchCollectionData<Reservation>('reservations');
+      const mappedEvents = fetchedReservations.map((reservation) => ({
+        ...reservation,
+        start: new Date(reservation.startTime),
+        end: new Date(reservation.endTime),
+        title: `${reservation.organizationName} - ${reservation.roomName}`,
+      }));
+      setEvents(mappedEvents);
+    } catch (error) {
+      // エラーハンドリング: エラーログを出力するなど
+      console.error('Error fetching events:', error);
+    }
   }, []);
 
   useEffect(() => {
@@ -61,7 +66,7 @@ const EventCalendar: React.FC = () => {
         endAccessor="end"
         style={{ height: '100%' }}
         components={{ toolbar: CustomHeader }}
-        min={new Date(0, 0, 0, 8, 0, 0)} 
+        min={new Date(0, 0, 0, 8, 0, 0)}
         max={new Date(0, 0, 0, 22, 0, 0)}
       />
     </div>
