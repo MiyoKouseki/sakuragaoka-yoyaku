@@ -1,24 +1,16 @@
 // EventCalendar.tsx
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, momentLocalizer, View } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment/locale/ja';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { fetchCollectionData } from '../../services/firestoreServices';
 import '../../styles/EventCalendarStyles.css';
 import { useMediaQuery } from '@mui/material';
 import CustomHeader from './CustomEventCalendarHeader';
+import { fetchEvents } from '../../services/fetchEvents';
 
 moment.locale('ja');
-
-interface Reservation {
-  id: string;
-  roomName: string;
-  organizationName: string;
-  startTime: string;
-  endTime: string;
-}
 
 interface Event {
   id: string;
@@ -35,26 +27,18 @@ const EventCalendar: React.FC = () => {
   const isSmallScreen = useMediaQuery(`(max-width:${SMALL_SCREEN_SIZE}px)`);
   const defaultView: View = isSmallScreen ? 'day' : 'week';
 
-  // リファクタリングされた非同期データフェッチ関数
-  const fetchEvents = useCallback(async () => {
-    try {
-      const fetchedReservations = await fetchCollectionData<Reservation>('reservations');
-      const mappedEvents = fetchedReservations.map((reservation) => ({
-        ...reservation,
-        start: new Date(reservation.startTime),
-        end: new Date(reservation.endTime),
-        title: `${reservation.organizationName} - ${reservation.roomName}`,
-      }));
-      setEvents(mappedEvents);
-    } catch (error) {
-      // エラーハンドリング: エラーログを出力するなど
-      console.error('Error fetching events:', error);
-    }
-  }, []);
 
   useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+    const loadEvents = async () => {
+      try {
+        const fetchedEvents = await fetchEvents();
+        setEvents(fetchedEvents); // 状態にイベントをセット
+      } catch (error) {
+        // ユーザーにエラーを通知するロジックをここに追加
+      }
+    };
+    loadEvents();
+  }, []);
 
   return (
     <div style={{ height: '700px' }}>

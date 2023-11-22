@@ -1,86 +1,51 @@
-// CustomHeader.tsx
-import React from 'react';
-import { ToolbarProps } from 'react-big-calendar';
-import { useMediaQuery, Button, Grid, IconButton } from '@mui/material';
+import React, { ElementType } from 'react';
+import { ToolbarProps, View } from 'react-big-calendar';
+import { Button, Grid, IconButton } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TodayIcon from '@mui/icons-material/Today';
 
-const CustomHeader: React.FC<ToolbarProps> = ({ label, onNavigate, onView, view }) => {
-    const isSmallScreen = useMediaQuery('(max-width:800px)');
+interface NavigationIconButtonProps {
+    onClick: () => void;
+    icon: ElementType;
+}
 
-    const getButtonStyle = (buttonView: string) => ({
-        borderColor: 'black', // これで常にボーダー色を黒に設定します
-        color: 'black', // これで常に文字色を黒に設定します
-        backgroundColor: view === buttonView ? '#f0f0f0' : '',
-        '&:hover': {
-            borderColor: 'black', // ホバー時もボーダー色を黒に保持します
-            backgroundColor: view === buttonView ? '#e0e0e0' : '',
-        },
-    });
+const NavigationIconButton: React.FC<NavigationIconButtonProps> = ({ onClick, icon: Icon }) => (
+    <IconButton onClick={onClick}>
+        <Icon />
+    </IconButton>
+);
 
-    return (
-        <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-            <Grid item>
-                <IconButton onClick={() => onNavigate('PREV')}>
-                    <ChevronLeftIcon />
-                </IconButton>
-                <IconButton onClick={() => onNavigate('TODAY')}>
-                    <TodayIcon />
-                </IconButton>
-                <IconButton onClick={() => onNavigate('NEXT')}>
-                    <ChevronRightIcon />
-                </IconButton>
-            </Grid>
+const renderButton = (buttonView: View, label: string, currentView: View, onView: (view: View) => void) => (
+    <Button
+        variant="outlined"
+        className={`view-button ${currentView === buttonView ? 'active' : ''}`}
+        onClick={() => onView(buttonView)}
+    >
+        {label}
+    </Button>
+);
 
-            <Grid item xs>
-                <div style={{ textAlign: 'center', flexGrow: 1 }}>
-                    {label} 日
-                </div>
-            </Grid>
-
-            <Grid item>
-                {isSmallScreen ? (
-                    // 小さい画面の場合
-                    <>
-                        <Button
-                            variant="outlined"
-                            sx={getButtonStyle('day')}
-                            onClick={() => onView('day')}
-                        >
-                            日
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            sx={getButtonStyle('agenda')}
-                            onClick={() => onView('agenda')}
-                        >
-                            予定リスト
-                        </Button>
-                    </>
-                ) : (
-                    // 大きい画面の場合
-                    <>
-                        <Button
-                            variant="outlined"
-                            sx={getButtonStyle('week')}
-                            onClick={() => onView('week')}
-                        >
-                            週
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            sx={getButtonStyle('agenda')}
-                            onClick={() => onView('agenda')}
-                        >
-                            予定リスト
-                        </Button>
-                    </>
-                )}
-
-            </Grid>
+const CustomHeader: React.FC<ToolbarProps> = ({ label, onNavigate, onView, view }) => (
+    <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
+        <Grid item>
+            <NavigationIconButton onClick={() => onNavigate('PREV')} icon={ChevronLeftIcon} />
+            <NavigationIconButton onClick={() => onNavigate('TODAY')} icon={TodayIcon} />
+            <NavigationIconButton onClick={() => onNavigate('NEXT')} icon={ChevronRightIcon} />
         </Grid>
-    );
-};
+
+        <Grid item xs>
+            <div style={{ textAlign: 'center', flexGrow: 1 }}>
+                {label} 日
+            </div>
+        </Grid>
+
+        <Grid item>
+            {renderButton('day', '日', view, onView)}
+            {renderButton('week', '週', view, onView)}
+            {renderButton('agenda', '予定リスト', view, onView)}
+        </Grid>
+    </Grid>
+);
 
 export default CustomHeader;
