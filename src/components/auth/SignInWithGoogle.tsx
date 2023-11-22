@@ -1,7 +1,7 @@
 // SignInWithGoogle.tsx
 import React from 'react';
 import Button from '@mui/material/Button';
-import { auth, googleProvider } from '../firebaseConfig';
+import { auth, googleProvider } from '../../firebaseConfig';
 import { signInWithPopup } from 'firebase/auth';
 
 const SignInWithGoogle: React.FC = () => {

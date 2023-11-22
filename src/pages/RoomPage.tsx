@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFirestoreCollection from '../hooks/useFirestoreCollection';
-import CustomTable from './CustomTable';
+import CustomTable from '../components/common/CustomTable';
 import sortData from '../utils/sortData';
-import CommonListContainer from './CommonListContainer';
+import CommonListContainer from '../components/common/CommonListContainer';
 
 interface Room {
   id: string;

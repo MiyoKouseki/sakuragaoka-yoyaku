@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Box, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import SubmitData from '../services/SubmitData';
+import SubmitData from '../../services/SubmitData';
 
 interface RegisterFormProps<T extends { [key: string]: any }> {
     defaultEntity: T;

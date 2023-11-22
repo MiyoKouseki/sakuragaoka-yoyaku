@@ -1,9 +1,9 @@
 // OrganizationRegisterForm.tsx
 import React from 'react';
-import { Organization } from '../interfaces/Organization';
-import { validateOrganizationData } from '../validations/validateOrganizationData';
-import OrganizationFormFields from './OrganizationFormFields';
-import RegisterForm from './RegisterForm';
+import { Organization } from '../../../interfaces/Entity';
+import { validateOrganizationData } from '../../../validations/validateOrganizationData';
+import OrganizationFormFields from '../../formFields/OrganizationFormFields';
+import RegisterForm from '../RegisterForm';
 
 const OrganizationRegisterForm: React.FC = () => {
   return (

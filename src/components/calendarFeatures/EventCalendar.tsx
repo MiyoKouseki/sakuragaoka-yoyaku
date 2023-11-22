@@ -5,10 +5,10 @@ import { Calendar, momentLocalizer, View } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment/locale/ja';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { fetchCollectionData } from '../services/firestoreServices';
-import './EventCalendarStyles.css';
+import { fetchCollectionData } from '../../services/firestoreServices';
+import '../../styles/EventCalendarStyles.css';
 import { useMediaQuery } from '@mui/material';
-import CustomHeader from './CustomHeader';
+import CustomHeader from './CustomEventCalendarHeader';
 
 moment.locale('ja');
 

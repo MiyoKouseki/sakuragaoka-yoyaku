@@ -3,7 +3,7 @@ import React from 'react';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import SignInWithGoogle from './SignInWithGoogle';
+import SignInWithGoogle from '../components/auth/SignInWithGoogle';
 
 const LoginPage: React.FC = () => {
   return (

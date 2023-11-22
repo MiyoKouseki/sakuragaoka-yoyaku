@@ -9,7 +9,6 @@ interface CommonListContainerProps {
   children: React.ReactNode;
 }
   
-
 const CommonListContainer: React.FC<CommonListContainerProps> = ({
   addButtonLabel,
   onAddButtonClick,

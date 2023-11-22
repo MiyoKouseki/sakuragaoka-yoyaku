@@ -1,6 +1,6 @@
 //validateOrganizationData.tsx
 
-import { Organization } from '../interfaces/Organization';
+import { Organization } from '../interfaces/Entity';
 
 export const validateOrganizationData = (organization: Organization): boolean => {
     const { name, representative, phone } = organization;

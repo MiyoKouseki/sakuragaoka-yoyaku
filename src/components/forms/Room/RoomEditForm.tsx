@@ -1,9 +1,9 @@
 // roomEditForm.tsx
 import React from 'react';
-import { Room } from '../interfaces/Room';
-import { validateRoomData } from '../validations/validateRoomData';
-import RoomFormFields from './RoomFormFields';
-import EditForm from './EditForm';
+import { Room } from '../../../interfaces/Entity';
+import { validateRoomData } from '../../../validations/validateRoomData';
+import RoomFormFields from '../../formFields/RoomFormFields';
+import EditForm from '../EditForm';
 
 const RoomEditForm: React.FC = () => {
   return (

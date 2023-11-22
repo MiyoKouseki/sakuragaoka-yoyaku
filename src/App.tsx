@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Toolbar, Container } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import NavigationBar from './components/NavigationBar';
-import AppRoutes from './components/AppRoutes';
+import AppRoutes from './AppRoutes';
 import { AuthProvider } from './contexts/AuthContext';
 import { createTheme, Theme } from '@mui/material/styles';
 

@@ -1,9 +1,9 @@
 // OrganizationEditForm.tsx
 import React from 'react';
-import { Organization } from '../interfaces/Organization';
-import { validateOrganizationData } from '../validations/validateOrganizationData';
-import OrganizationFormFields from './OrganizationFormFields';
-import EditForm from './EditForm';
+import { Organization } from '../../../interfaces/Entity';
+import { validateOrganizationData } from '../../../validations/validateOrganizationData';
+import OrganizationFormFields from '../../formFields/OrganizationFormFields';
+import EditForm from '../EditForm';
 
 const OrganizationEditForm: React.FC = () => {
   return (

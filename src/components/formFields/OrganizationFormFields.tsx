@@ -1,6 +1,6 @@
 // entityFormFields.tsx
 import { TextField, Button } from '@mui/material';
-import { Organization } from '../interfaces/Organization';
+import { Organization } from '../../interfaces/Entity';
 
 interface FormFieldsProps<T> {
     entity: T;

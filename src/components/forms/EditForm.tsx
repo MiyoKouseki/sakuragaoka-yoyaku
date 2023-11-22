@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import EditData from '../services/EditData';
-import FetchData from '../services/FetchData';
+import EditData from '../../services/EditData';
+import FetchData from '../../services/FetchData';
 
 interface RouteParams {
     [key: string]: string | undefined;

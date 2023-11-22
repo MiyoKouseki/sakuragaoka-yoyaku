@@ -1,7 +1,7 @@
 // src/components/RoomFormFields.tsx
 import React from 'react';
 import { Button, TextField } from '@mui/material';
-import { Room } from '../interfaces/Room';
+import { Room } from '../../interfaces/Entity';
 
 interface FormFieldsProps<T> {
     entity: T;

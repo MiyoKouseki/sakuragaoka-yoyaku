@@ -1,6 +1,6 @@
 // YoyakuPage.tsx
 import React from 'react';
-import EventCalendar from './EventCalendar';
+import EventCalendar from '../components/calendarFeatures/EventCalendar';
 import Container from '@mui/material/Container';
 
 const YoyakuPage: React.FC = () => {

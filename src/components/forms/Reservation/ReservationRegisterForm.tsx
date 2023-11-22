@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Container } from '@mui/material';
 import { setDoc, doc } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { generateHash } from '../utils/generateHash';
+import { generateHash } from '../../../utils/generateHash';
 import { Timestamp } from 'firebase/firestore';
 
 const ReservationRegisterForm: React.FC = () => {
