@@ -32,7 +32,7 @@ const EventCalendar: React.FC = () => {
     const loadEvents = async () => {
       try {
         const fetchedEvents = await fetchEvents();
-        setEvents(fetchedEvents); // 状態にイベントをセット
+        setEvents(fetchedEvents); 
       } catch (error) {
         // ユーザーにエラーを通知するロジックをここに追加
       }
