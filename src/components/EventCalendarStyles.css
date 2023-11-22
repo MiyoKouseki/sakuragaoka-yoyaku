@@ -4,3 +4,14 @@
     height: 3px; /* 線の太さを太くする */
     background-color: rgb(0, 255, 149); /* 線の色を赤にする（任意で変更可） */
   }
+
+  .custom-header {
+    /* 余白を減らす */
+    margin-bottom: 1px; /* この値を小さくする */
+  }
+  
+  .rbc-calendar {
+    /* もしカレンダーの上に余白があれば、ここで調整する */
+    margin-top: 1px; /* この値を小さくする */
+  }
+  

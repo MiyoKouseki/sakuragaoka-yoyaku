@@ -8,19 +8,6 @@ interface CommonListContainerProps {
   addButtonPath: string;
   children: React.ReactNode;
 }
-
-const styles = {
-    container: {
-      padding: '20px',
-      marginTop: '20px',
-    },
-    heading: {
-      marginBottom: '20px',
-    },
-    tableContainer: {
-      marginTop: '20px',
-    },
-  };
   
 
 const CommonListContainer: React.FC<CommonListContainerProps> = ({
@@ -30,7 +17,7 @@ const CommonListContainer: React.FC<CommonListContainerProps> = ({
   children,
 }) => {
   return (
-    <Container maxWidth="md" style={styles.container}>
+    <Container>
       <Paper elevation={3}>
         <Link to={addButtonPath} style={{ textDecoration: 'none' }}>
           <Button variant="contained" color="primary" style={{ margin: '20px' }} onClick={onAddButtonClick}>

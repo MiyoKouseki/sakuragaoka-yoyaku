@@ -66,7 +66,7 @@ const NavigationBar: React.FC = () => {
 
     return (
         <AppBar position="static">
-            <Toolbar>
+            <Toolbar sx={{ minHeight: '40px' }}> {/* ナビゲーションバーの高さを小さくする */}
                 {isMobile ? (
                     <>
                         <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleMobileMenuToggle}>

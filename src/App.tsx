@@ -22,6 +22,16 @@ const theme: Theme = createTheme({
             main: '#FFB6C1', // 桜の色に合わせたピンク
         },
     },
+    components: {
+        MuiContainer: {
+          styleOverrides: {
+            root: { // 'root'はContainerコンポーネントのルートスタイルに対応します
+              paddingTop: 0, // 上のパディングを0に
+              paddingBottom: 0, // 下のパディングを0に
+            },
+          },
+        },
+      },
 });
 
 const App: React.FC = () => {
@@ -31,7 +41,7 @@ const App: React.FC = () => {
                 <AuthProvider>
                     < NavigationBar />
                     <Container>
-                        <Toolbar />
+                        <Toolbar variant="dense" />
                         <AppRoutes />
                     </Container>
                 </AuthProvider>
