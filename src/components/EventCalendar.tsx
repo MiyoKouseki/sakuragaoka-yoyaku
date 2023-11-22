@@ -61,6 +61,8 @@ const EventCalendar: React.FC = () => {
         endAccessor="end"
         style={{ height: '100%' }}
         components={{ toolbar: CustomHeader }}
+        min={new Date(0, 0, 0, 8, 0, 0)} 
+        max={new Date(0, 0, 0, 22, 0, 0)}
       />
     </div>
   );
