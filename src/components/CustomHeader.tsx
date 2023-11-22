@@ -40,7 +40,26 @@ const CustomHeader: React.FC<ToolbarProps> = ({ label, onNavigate, onView, view 
             </Grid>
 
             <Grid item>
-                {!isSmallScreen && (
+                {isSmallScreen ? (
+                    // 小さい画面の場合
+                    <>
+                        <Button
+                            variant="outlined"
+                            sx={getButtonStyle('day')}
+                            onClick={() => onView('day')}
+                        >
+                            日
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            sx={getButtonStyle('agenda')}
+                            onClick={() => onView('agenda')}
+                        >
+                            予定リスト
+                        </Button>
+                    </>
+                ) : (
+                    // 大きい画面の場合
                     <>
                         <Button
                             variant="outlined"
@@ -58,6 +77,7 @@ const CustomHeader: React.FC<ToolbarProps> = ({ label, onNavigate, onView, view 
                         </Button>
                     </>
                 )}
+
             </Grid>
         </Grid>
     );
