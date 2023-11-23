@@ -43,6 +43,7 @@ const CustomHeader: React.FC<ToolbarProps> = ({ label, onNavigate, onView, view 
         <Grid item>
             {renderButton('day', '日', view, onView)}
             {renderButton('week', '週', view, onView)}
+            {renderButton('month', '月', view, onView)}
             {renderButton('agenda', '予定リスト', view, onView)}
         </Grid>
     </Grid>

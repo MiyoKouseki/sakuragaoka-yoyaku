@@ -46,7 +46,7 @@ const NavigationBar: React.FC = () => {
                 {renderMenuLink("/", <HomeIcon />, handleMobileMenuToggle)}
                 {renderMenuLink("/rooms/list", "部屋", handleMobileMenuToggle)}
                 {user && renderMenuLink("/organization/list","団体",handleMobileMenuToggle)}
-                {user && renderMenuLink("/reservation/list","予約",handleMobileMenuToggle)}
+                {user && renderMenuLink("/reservations/list","予約",handleMobileMenuToggle)}
             </List>
         </Drawer>
     );

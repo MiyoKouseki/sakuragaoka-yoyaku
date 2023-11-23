@@ -1,7 +1,6 @@
 // firestoreService.ts
-import { collection, getFirestore, query, getDocs, QueryDocumentSnapshot } from 'firebase/firestore';
+import { collection, getFirestore, query, getDocs, QueryDocumentSnapshot, where } from 'firebase/firestore';
 
-// Firestoreのドキュメントからデータを取得して汎用的な型に変換するための関数
 const docToData = <T>(doc: QueryDocumentSnapshot): T => {
   const data = doc.data();
   return {
@@ -10,11 +9,23 @@ const docToData = <T>(doc: QueryDocumentSnapshot): T => {
   } as T;
 };
 
-// 任意のFirestoreコレクションからデータを取得する汎用的な関数
-export const fetchCollectionData = async <T>(collectionName: string): Promise<T[]> => {
+export const fetchCollectionData = async <T>(
+  collectionName: string,
+  fieldName?: string,
+  value?: any
+): Promise<T[]> => {
   const db = getFirestore();
   const collectionRef = collection(db, collectionName);
-  const q = query(collectionRef);
+  let q;
+
+  if (fieldName && value !== undefined) {
+    // 特定のフィールドに基づいてクエリを作成
+    q = query(collectionRef, where(fieldName, '==', value));
+  } else {
+    // フィールド指定がない場合は、コレクション全体を対象にクエリを作成
+    q = query(collectionRef);
+  }
+
   const querySnapshot = await getDocs(q);
   const items: T[] = [];
 

@@ -15,3 +15,19 @@
     margin-top: 1px; /* この値を小さくする */
   }
   
+
+  /* カスタムボタンのスタイル */
+.custom-button-red {
+  background-color: red;
+  color: white;
+}
+
+.custom-button-blue {
+  background-color: blue;
+  color: white;
+}
+
+.custom-button-green {
+  background-color: green;
+  color: white;
+}

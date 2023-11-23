@@ -17,8 +17,16 @@ interface Reservation {
     organizationName: string;
     startTime: string;
     endTime: string;
-  }
-  
+}
+
+interface Event {
+    id: string;
+    title: string;
+    color: string;
+    roomName: string;
+    start: Date;
+    end: Date;
+}
 
 export interface SubmitDataParams<T> {
     collectionName: string;
@@ -38,4 +46,4 @@ export function isOrganization(entity: Entity): entity is Organization {
     return 'representative' in entity;
 }
 
-export type { Entity, Room, Organization, Reservation }; 
+export type { Entity, Room, Organization, Reservation, Event }; 
