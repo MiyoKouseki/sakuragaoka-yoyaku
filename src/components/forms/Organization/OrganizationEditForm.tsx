@@ -12,7 +12,7 @@ const OrganizationEditForm: React.FC = () => {
       collectionName="organizations"
       validateData={validateOrganizationData}
       FormFieldsComponent={OrganizationFormFields}
-      navigatePathAfterSuccess="/organization/list"
+      navigatePathAfterSuccess="/organizations/list"
     />
   );
 };

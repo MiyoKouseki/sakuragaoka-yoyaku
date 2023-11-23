@@ -2,7 +2,8 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import YoyakuPage from './pages/YoyakuPage';
-import YoyakuForm from './components/forms/Reservation/ReservationRegisterForm';
+import CalendarPage from './pages/CalendarPage';
+import ReservationForm from './components/forms/Reservation/ReservationRegisterForm';
 import ReservationList from './pages/ReservationPage';
 import OrganizationForm from './components/forms/Organization/OrganizationRegisterForm';
 import OrganizationList from './pages/OrganizationPage';
@@ -17,11 +18,13 @@ const AppRoutes: React.FC = () => {
     return (
         <Routes>
             <Route path="/" element={<YoyakuPage />} />
-            <Route path="/reservations/register" element={<YoyakuForm />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/reservations/register" element={<ReservationForm />} />
             <Route path="/reservations/list" element={<ReservationList />} />
-            <Route path="/organization/register" element={<OrganizationForm />} />
-            <Route path="/organization/list" element={<OrganizationList />} />
-            <Route path="/organization/edit/:documentId" element={<OrganizationEditForm />} />
+            { /* <Route path="/reservations/edit/:documentId" element={<ReservationEditForm />} /> */}
+            <Route path="/organizations/register" element={<OrganizationForm />} />
+            <Route path="/organizations/list" element={<OrganizationList />} />
+            <Route path="/organizations/edit/:documentId" element={<OrganizationEditForm />} />
             <Route path="/rooms/register" element={<RoomRegisterForm />} />
             <Route path="/rooms/list" element={<RoomList />} />
             <Route path="/rooms/edit/:documentId" element={<RoomEditForm />} />

@@ -47,7 +47,7 @@ const OrganizationList: React.FC = () => {
   };
 
   const handleEdit = (docId: string) => {
-    navigate(`/organization/edit/${docId}`);
+    navigate(`/organizations/edit/${docId}`);
   };
 
   const handleSort = (key: keyof Organization) => {
@@ -59,8 +59,8 @@ const OrganizationList: React.FC = () => {
   return (
     <CommonListContainer
       addButtonLabel="団体追加"
-      onAddButtonClick={() => navigate('/organization/register')}
-      addButtonPath="/organization/register"
+      onAddButtonClick={() => navigate('/organizations/register')}
+      addButtonPath="/organizations/register"
     >
       <CustomTable
         data={sortedOrganizations}
