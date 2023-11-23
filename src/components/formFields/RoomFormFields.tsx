@@ -26,10 +26,30 @@ const EntityFormFields: React.FC<FormFieldsProps<Room>> = ({ entity, setEntity }
                 required
                 fullWidth
                 id="location"
-                label="所在地"
+                label="建物名"
                 name="location"
                 value={entity.location}
                 onChange={(e) => setEntity({ ...entity, location: e.target.value })}
+            />
+             <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="category"
+                label="カテゴリー"
+                name="category"
+                value={entity.category}
+                onChange={(e) => setEntity({ ...entity, category: e.target.value })}
+            />
+             <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="owner"
+                label="所有者"
+                name="owner"
+                value={entity.owner}
+                onChange={(e) => setEntity({ ...entity, owner: e.target.value })}
             />
             <Button
                 type="submit"

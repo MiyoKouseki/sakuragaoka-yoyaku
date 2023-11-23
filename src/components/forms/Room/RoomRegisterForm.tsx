@@ -8,7 +8,13 @@ import RegisterForm from '../RegisterForm';
 const RoomRegisterForm: React.FC = () => {
   return (
     <RegisterForm<Room>
-      defaultEntity={{ name: '', location: '' }}
+      defaultEntity={{ 
+        id: '',
+        name: '', 
+        location: '',
+        category: '',
+        owner: ''
+      }}
       collectionName="rooms"
       validateData={validateRoomData}
       FormFieldsComponent={RoomFormFields}

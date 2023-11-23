@@ -8,7 +8,13 @@ import EditForm from '../EditForm';
 const RoomEditForm: React.FC = () => {
   return (
     <EditForm<Room>
-      defaultEntity={{ name: '', location: '' }}
+      defaultEntity={{
+        id: '',
+        name: '',
+        location: '',
+        category: '',
+        owner: ''
+      }}
       collectionName="rooms"
       validateData={validateRoomData}
       FormFieldsComponent={RoomFormFields}

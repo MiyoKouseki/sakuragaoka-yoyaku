@@ -7,8 +7,11 @@ interface Organization {
 }
 
 interface Room {
+    id: string;
     name: string;
     location: string;
+    category: string;
+    owner: string;
 }
 
 interface Reservation {

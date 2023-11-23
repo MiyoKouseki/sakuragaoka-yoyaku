@@ -5,12 +5,7 @@ import useFirestoreCollection from '../hooks/useFirestoreCollection';
 import CustomTable from '../components/common/CustomTable';
 import sortData from '../utils/sortData';
 import CommonListContainer from '../components/common/CommonListContainer';
-
-interface Room {
-  id: string;
-  name: string;
-  location: string;
-}
+import { Room } from '../interfaces/Entity';
 
 interface SortConfig {
   key: keyof Room; // ソートするキー（列名）
@@ -33,6 +28,9 @@ const RoomList: React.FC = () => {
     },
     { id: 'name' as keyof Room, label: '名前', sortable: true },
     { id: 'location' as keyof Room, label: '建物名', sortable: true },
+    { id: 'category' as keyof Room, label: 'カテゴリー', sortable: true },
+    { id: 'owner' as keyof Room, label: '所有者', sortable: true },
+
   ];
 
   useEffect(() => {
