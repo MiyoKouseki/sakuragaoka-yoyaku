@@ -1,33 +1,20 @@
-
 /* 現在時刻の線のスタイルをカスタマイズ */
 .rbc-today .rbc-current-time-indicator {
-    height: 3px; /* 線の太さを太くする */
-    background-color: rgb(0, 255, 149); /* 線の色を赤にする（任意で変更可） */
-  }
-
-  .custom-header {
-    /* 余白を減らす */
-    margin-bottom: 1px; /* この値を小さくする */
-  }
-  
-  .rbc-calendar {
-    /* もしカレンダーの上に余白があれば、ここで調整する */
-    margin-top: 1px; /* この値を小さくする */
-  }
-  
-
-  /* カスタムボタンのスタイル */
-.custom-button-red {
-  background-color: red;
-  color: white;
+  height: 3px;
+  /* 線の太さを太くする */
+  background-color: rgb(0, 255, 149);
+  /* 線の色を赤にする（任意で変更可） */
 }
 
-.custom-button-blue {
-  background-color: blue;
-  color: white;
+.custom-header {
+  /* 余白を減らす */
+  margin-bottom: 1px;
+  /* この値を小さくする */
 }
 
-.custom-button-green {
-  background-color: green;
-  color: white;
+.rbc-calendar {
+  /* もしカレンダーの上に余白があれば、ここで調整する */
+  margin-top: 1px;
+  /* この値を小さくする */
 }
+

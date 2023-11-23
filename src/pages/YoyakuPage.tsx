@@ -4,13 +4,13 @@ import EventCalendar from '../components/calendarFeatures/EventCalendar';
 import Container from '@mui/material/Container';
 import { fetchEvents } from '../services/fetchEvents';
 import { Event } from '../interfaces/Entity';
-import Button from '@mui/material/Button';
 import '../styles/EventCalendarStyles.css';
+import Chip from '@mui/material/Chip';
 
 const YoyakuPage: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const availableRoomNames = useMemo(() => ['部屋A', '部屋B', '体育室', '第2会議室'], []);
-  const buttonColors = useMemo(() => ['red', 'blue', 'green'], []);
+  const buttonColors = useMemo(() => ['#ff9999', '#99ccff', '#66cc66'], []);
   const [selectedRoomNames, setSelectedRoomNames] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
 
@@ -58,20 +58,22 @@ const YoyakuPage: React.FC = () => {
     <Container>
       <div>
         {availableRoomNames.map((roomName, index) => (
-          <Button
+          <Chip
             key={index}
-            variant={selectedRoomNames.includes(roomName) ? "contained" : "outlined"}
+            label={roomName}
+            variant={selectedRoomNames.includes(roomName) ? "filled" : "outlined"}
+            className={`tag-style-button ${selectedRoomNames.includes(roomName) ? "selected" : ""}`}
             style={{
               backgroundColor: selectedRoomNames.includes(roomName)
                 ? selectedColors[selectedRoomNames.indexOf(roomName)]
                 : undefined,
               color: selectedRoomNames.includes(roomName) ? 'white' : undefined,
-              margin: '5px',
+              margin: '1px',
+              borderRadius: '5px',
+              padding: '1px 1px',
             }}
             onClick={() => handleRoomSelect(roomName)}
-          >
-            {roomName}
-          </Button>
+          />
         ))}
       </div>
       <EventCalendar events={events} eventColors={roomColors} />
