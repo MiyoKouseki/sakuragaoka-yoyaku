@@ -22,8 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-firebaseConfig.ts
+*_bak
 .firebase
 static
 asset-manifest.json
 public_firebase
+
+.env
