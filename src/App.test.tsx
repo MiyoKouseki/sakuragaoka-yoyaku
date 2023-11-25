@@ -12,7 +12,7 @@ const theme = createTheme({
 
 // AuthProviderをモックする
 jest.mock('./contexts/AuthContext', () => ({
-  AuthProvider: ({ children }) => <div>{children}</div>,
+  AuthProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 test('App コンポーネントが適切にレンダリングされる', () => {
