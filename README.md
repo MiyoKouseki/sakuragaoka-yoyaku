@@ -7,4 +7,4 @@ Firebaseの公開先：
 
 [![codecov](https://codecov.io/gh/MiyoKouseki/sakuragaoka-yoyaku/branch/main/graph/badge.svg)](https://codecov.io/gh/MiyoKouseki/sakuragaoka-yoyaku)
 
-![CI](https://github.com/MiyoKouseki/sakuragaoka-yoyaku/workflows/CI/badge.svg)
+[![CI](https://github.com/MiyoKouseki/sakuragaoka-yoyaku/workflows/CI/badge.svg)](https://github.com/MiyoKouseki/sakuragaoka-yoyaku/actions)
