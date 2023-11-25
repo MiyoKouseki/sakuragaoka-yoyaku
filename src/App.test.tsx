@@ -3,21 +3,24 @@ import { render, screen } from '@testing-library/react';
 import App from './App';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
-import { AuthProvider } from './contexts/AuthContext';
 import { createTheme } from '@mui/material/styles';
+import { AuthProvider } from './contexts/AuthContext'; // AuthProviderをインポート
 
 const theme = createTheme({
   // テーマの設定
 });
 
+// AuthProviderをモックする
+jest.mock('./contexts/AuthContext', () => ({
+  AuthProvider: ({ children }) => <div>{children}</div>,
+}));
+
 test('App コンポーネントが適切にレンダリングされる', () => {
   render(
     <ThemeProvider theme={theme}>
-      <Router>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </Router>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ThemeProvider>
   );
 
