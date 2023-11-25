@@ -6,3 +6,5 @@ Firebaseの公開先：
 ![フロントページ](./FrontPage.png)
 
 [![codecov](https://codecov.io/gh/MiyoKouseki/sakuragaoka-yoyaku/branch/main/graph/badge.svg)](https://codecov.io/gh/MiyoKouseki/sakuragaoka-yoyaku)
+
+![CI](https://github.com/MiyoKouseki/sakuragaoka-yoyaku/workflows/CI/badge.svg)
