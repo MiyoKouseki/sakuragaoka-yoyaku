@@ -1,5 +1,5 @@
 // YoyakuPage.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import Chip from '@mui/material/Chip';
 import { Grid, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -11,7 +11,47 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { fetchReservations } from '../services/fetchReservations';
 import EventCalendar from '../components/calendarFeatures/EventCalendar';
 
+type State = {
+    selectedBuilding: BuildingType;
+    selectedRoom: string;
+    selectedDate: string | null;
+    calendarDate: Date;
+    startTime: Date | null;
+    selectedUsageTime: number | null;
+    reservations: Event[];
+};
 
+type Action =
+    | { type: 'SET_BUILDING'; payload: BuildingType }
+    | { type: 'SET_ROOM'; payload: string }
+    | { type: 'SET_DATE'; payload: string | null }
+    | { type: 'SET_CALENDAR_DATE'; payload: Date }
+    | { type: 'SET_START_TIME'; payload: Date | null }
+    | { type: 'SET_USAGE_TIME'; payload: number | null }
+    | { type: 'SET_RESERVATIONS'; payload: Event[] };
+
+    const reducer = (state: State, action: Action): State => {
+        switch (action.type) {
+            case 'SET_BUILDING':
+                return { ...state, selectedBuilding: action.payload };
+            case 'SET_ROOM':
+                return { ...state, selectedRoom: action.payload };
+            case 'SET_DATE':
+                return { ...state, selectedDate: action.payload };
+            case 'SET_CALENDAR_DATE':
+                return { ...state, calendarDate: action.payload };
+            case 'SET_START_TIME':
+                return { ...state, startTime: action.payload };
+            case 'SET_USAGE_TIME':
+                return { ...state, selectedUsageTime: action.payload };
+            case 'SET_RESERVATIONS':
+                return { ...state, reservations: action.payload };
+            default:
+                return state;
+        }
+    };
+
+    
 const BuildingSelector = ({
     selectedBuilding,
     onSelectBuilding
@@ -125,46 +165,47 @@ const getNextHalfHourDate = () => {
 };
 
 const YoyakuPage: React.FC = () => {
-    const [selectedBuilding, setSelectedBuilding] = useState<BuildingType>('桜ヶ丘体育館');
-    const [selectedRoom, setSelectedRoom] = useState<string>('体育室A面');
-    const today = format(new Date(), 'yyyy-MM-dd', { locale: ja }); // 例: "2023-11-26"
-    const [selectedDate, setSelectedDate] = useState<string | null>(today);
-    const initialCalendarDate = today ? new Date(today) : new Date();
-    const [calendarDate, setCalendarDate] = useState<Date>(initialCalendarDate);
-    const [startTime, setStartTime] = useState<Date | null>(getNextHalfHourDate());
-    const [selectedUsageTime, setSelectedUsageTime] = useState<number | null>(1);
-    const [reservations, setReservations] = useState<Event[]>([]);
-
+    const initialState: State = {
+        selectedBuilding: '桜ヶ丘体育館',
+        selectedRoom: '体育室A面',
+        selectedDate: format(new Date(), 'yyyy-MM-dd', { locale: ja }),
+        calendarDate: new Date(),
+        startTime: getNextHalfHourDate(),
+        selectedUsageTime: 1,
+        reservations: [],
+    };
+    
+    const [state, dispatch] = useReducer(reducer, initialState);
+    
     useEffect(() => {
         const fetchAndSetReservations = async () => {
-            if (selectedDate && startTime) {
-                const startOfDay = new Date(selectedDate);
+            if (state.selectedDate && state.startTime) {
+                const startOfDay = new Date(state.selectedDate);
                 startOfDay.setHours(0, 0, 0, 0); // 時、分、秒、ミリ秒を0に設定
 
                 // その日の24時（翌日の0時、日の終わり）
-                const endOfDay = new Date(selectedDate);
+                const endOfDay = new Date(state.selectedDate);
                 endOfDay.setHours(24, 0, 0, 0); // 時を24に設定し、分、秒、ミリ秒を0に設定
 
                 try {
                     const fetchedReservations = await fetchReservations(
-                        selectedRoom,
+                        state.selectedRoom,
                         startOfDay.toISOString(),
                         endOfDay.toISOString()
                     );
 
-
-                    setReservations(fetchedReservations);
+                    dispatch({ type: 'SET_RESERVATIONS', payload: fetchedReservations });
                 } catch (error) {
                     console.error('Error fetching reservations:', error);
                 }
             }
             else {
-                console.log('!!!!', selectedDate, startTime)
+                console.log('!!!!', state.selectedDate, state.startTime)
             }
         };
 
         fetchAndSetReservations();
-    }, [selectedDate, startTime, selectedUsageTime, selectedRoom]);
+    }, [state.selectedDate, state.startTime, state.selectedUsageTime, state.selectedRoom]);
 
     const usageTimeOptions = [
         { label: '1時間', value: 1 },
@@ -180,21 +221,18 @@ const YoyakuPage: React.FC = () => {
         { label: '6時間', value: 6 },
     ];
 
-    //const handleUsageTimeChange = (event: React.SyntheticEvent) => {
-    //    const value = parseFloat((event.target as HTMLInputElement).value);
-    //    setSelectedUsageTime(value);
-    //};
-
     const handleUsageTimeChange = (event: SelectChangeEvent<number | null>) => {
         const newValue = event.target.value;
-        setSelectedUsageTime(newValue === null ? null : parseFloat(newValue.toString()));
+        dispatch({ type: 'SET_USAGE_TIME', payload: newValue === null ? null : parseFloat(newValue.toString()) });
+
     };
 
 
-    const handleDateClick = (date: string) => {
-        setSelectedDate(date);
+    const handleDateClick = (date: string) => {        
+        dispatch({ type: 'SET_DATE', payload: date});
+
         const calendarDate = date ? new Date(date) : new Date();
-        setCalendarDate(calendarDate);
+        dispatch({ type: 'SET_CALENDAR_DATE', payload: calendarDate});
     };
 
     const rooms: { [key in BuildingType]: string[] } = {
@@ -204,15 +242,15 @@ const YoyakuPage: React.FC = () => {
     };
 
     const handleBuildingClick = (building: BuildingType) => {
-        setSelectedBuilding(building);
-        setSelectedRoom(rooms[building][0]); // 選択された建物の最初の部屋を選択
+        dispatch({ type: 'SET_BUILDING', payload: building });
+        // 必要に応じて関連する状態も更新
     };
 
     const handleRoomClick = (room: string) => {
-        setSelectedRoom(room);
+        dispatch({ type: 'SET_ROOM', payload: room });
     };
 
-    const transformedEvents = reservations.map((event: Event) => ({
+    const transformedEvents = state.reservations.map((event: Event) => ({
         title: event.organizationName,
         start: new Date(event.startTime),
         end: new Date(event.endTime),
@@ -227,15 +265,15 @@ const YoyakuPage: React.FC = () => {
                 <Typography variant="subtitle1">建物</Typography>
             </Grid>
             <BuildingSelector
-                selectedBuilding={selectedBuilding}
+                selectedBuilding={state.selectedBuilding}
                 onSelectBuilding={handleBuildingClick}
             />
             <Grid item xs={2}>
                 <Typography variant="subtitle1">部屋</Typography>
             </Grid>
             <RoomSelector
-                selectedBuilding={selectedBuilding}
-                selectedRoom={selectedRoom}
+                selectedBuilding={state.selectedBuilding}
+                selectedRoom={state.selectedRoom}
                 onSelectRoom={handleRoomClick}
                 rooms={rooms}
             />
@@ -244,7 +282,7 @@ const YoyakuPage: React.FC = () => {
             </Grid>
             <DateSelector
                 dates={dates}
-                selectedDate={selectedDate}
+                selectedDate={state.selectedDate}
                 onSelectDate={handleDateClick}
             />
             <Grid item xs={2}>
@@ -254,8 +292,8 @@ const YoyakuPage: React.FC = () => {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <TimePicker
                         label="開始時刻"
-                        value={startTime}
-                        onChange={(newTime) => setStartTime(newTime)}
+                        value={state.startTime}
+                        onChange={(newTime) => dispatch({ type: 'SET_START_TIME', payload: newTime})}
                         minutesStep={30}
                         ampm={false}
                     />
@@ -269,7 +307,7 @@ const YoyakuPage: React.FC = () => {
                     <InputLabel id="usage-time-label">利用時間</InputLabel>
                     <Select
                         labelId="usage-time-label"
-                        value={selectedUsageTime}
+                        value={state.selectedUsageTime}
                         onChange={handleUsageTimeChange}
                     >
                         {usageTimeOptions.map((option) => (
@@ -282,16 +320,16 @@ const YoyakuPage: React.FC = () => {
             </Grid >
             <Grid item xs={12}>
                 {
-                    selectedBuilding && (
+                    state.selectedBuilding && (
                         <Typography variant="subtitle1">
-                            {selectedBuilding},{selectedRoom}, {selectedDate}, {startTime?.toISOString()}, {selectedUsageTime}
+                            {state.selectedBuilding},{state.selectedRoom}, {state.selectedDate}, {state.startTime?.toISOString()}, {state.selectedUsageTime}
                         </Typography>
                     )
                 }
             </Grid>
             <Grid item xs={12}>
                 <Typography variant="h6">予約情報:</Typography>
-                {reservations.map((reservation, index) => (
+                {state.reservations.map((reservation, index) => (
                     <Typography key={index}>
                         {reservation.organizationName} - {reservation.roomName} - {reservation.startTime} - {reservation.endTime}
                     </Typography>
@@ -300,7 +338,7 @@ const YoyakuPage: React.FC = () => {
             <EventCalendar
                 events={transformedEvents}
                 eventColors={{}}
-                date={calendarDate}
+                date={state.calendarDate}
             />
         </Grid >
     );
