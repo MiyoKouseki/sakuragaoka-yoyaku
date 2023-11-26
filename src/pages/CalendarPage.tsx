@@ -35,7 +35,7 @@ const CalendarPage: React.FC = () => {
     };
     loadEvents();
     setSelectedColors(selectedRoomNames.map(roomName => roomColors[roomName]));
-  }, [selectedRoomNames, roomColors]); 
+  }, [selectedRoomNames, roomColors]);
 
   const handleRoomSelect = (roomName: string) => {
     setSelectedRoomNames(prev => {
@@ -52,7 +52,7 @@ const CalendarPage: React.FC = () => {
     });
   };
 
-  
+
 
   return (
     <Container>
@@ -76,7 +76,11 @@ const CalendarPage: React.FC = () => {
           />
         ))}
       </div>
-      <EventCalendar events={events} eventColors={roomColors} />
+      <EventCalendar
+        events={events}
+        eventColors={roomColors}
+        date={new Date()}
+      />
     </Container>
   );
 };

@@ -1,5 +1,5 @@
 // YoyakuPage.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Chip from '@mui/material/Chip';
 import { Grid, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -7,16 +7,30 @@ import { format, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { fetchReservations } from '../services/fetchReservations';
+import EventCalendar from '../components/calendarFeatures/EventCalendar';
+
+interface Event {
+    organizationName: string;
+    roomName: string;
+    startTime: string;
+    endTime: string;
+    // 他の必要なフィールド
+}
 
 // 今日から7日間の日付と曜日を生成する関数（日本語）
 const generateDates = () => {
     const today = new Date();
     return Array.from({ length: 7 }, (_, i) => {
         const date = addDays(today, i);
-        return format(date, 'M/d(E)', { locale: ja }); // 例: "11/26(日)"
+        return {
+            display: format(date, 'M/d(E)', { locale: ja }), // 表示用: "11/26(日)"
+            value: format(date, 'yyyy-MM-dd'), // 解析可能な形式: "2023-11-26"
+        };
     });
 };
+
 
 const chipStyle = {
     size: 'medium' as const,
@@ -30,23 +44,64 @@ const dates = generateDates();
 
 const formatTime = (date: Date | null) => {
     if (date) {
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const ampm = hours >= 12 ? '午後' : '午前';
-        const formattedHours = hours % 12 || 12;
-        const formattedMinutes = minutes.toString().padStart(2, '0');
-        return `${ampm} ${formattedHours}:${formattedMinutes}`;
+        const hours = date.getHours().toString().padStart(2, '0'); // 時間を2桁で表記
+        const minutes = date.getMinutes().toString().padStart(2, '0'); // 分を2桁で表記
+        return `${hours}:${minutes}`; // "HH:mm" 形式で返す
     }
     return '';
+};
+
+const getNextHalfHourDate = () => {
+    const now = new Date();
+    const minutes = now.getMinutes();
+    const nextHalfHour = minutes >= 30 ? new Date(now.setHours(now.getHours() + 1, 0, 0, 0)) : new Date(now.setMinutes(30, 0, 0));
+    return nextHalfHour;
 };
 
 const BuildingSelector: React.FC = () => {
     const [selectedBuilding, setSelectedBuilding] = useState<BuildingType>('桜ヶ丘体育館');
     const [selectedRoom, setSelectedRoom] = useState<string>('体育室A面');
-    const today = format(new Date(), 'M/d(E)', { locale: ja });
+    const today = format(new Date(), 'yyyy-MM-dd', { locale: ja }); // 例: "2023-11-26"
     const [selectedDate, setSelectedDate] = useState<string | null>(today);
-    const [startTime, setStartTime] = useState<Date | null>();
+    const initialCalendarDate = today ? new Date(today) : new Date();
+    const [calendarDate, setCalendarDate] = useState<Date>(initialCalendarDate);
+    const [startTime, setStartTime] = useState<Date | null>(getNextHalfHourDate());
     const [selectedUsageTime, setSelectedUsageTime] = useState<number | null>(1);
+    const [reservations, setReservations] = useState<Event[]>([]);
+
+    useEffect(() => {
+        const fetchAndSetReservations = async () => {
+            if (selectedDate && startTime) {
+                const combinedStartTime = new Date(`${selectedDate}T${formatTime(startTime)}`);
+                const usageTimeInHours = selectedUsageTime != null ? selectedUsageTime : 1;
+                const combinedEndTime = new Date(combinedStartTime.getTime() + usageTimeInHours * 3600000);
+                const startOfDay = new Date(selectedDate);
+                startOfDay.setHours(0, 0, 0, 0); // 時、分、秒、ミリ秒を0に設定
+
+                // その日の24時（翌日の0時、日の終わり）
+                const endOfDay = new Date(selectedDate);
+                endOfDay.setHours(24, 0, 0, 0); // 時を24に設定し、分、秒、ミリ秒を0に設定
+
+                try {
+                    const fetchedReservations = await fetchReservations(
+                        selectedRoom,
+                        startOfDay.toISOString(),
+                        endOfDay.toISOString()
+                    );
+                    
+
+                    setReservations(fetchedReservations);
+                } catch (error) {
+                    console.error('Error fetching reservations:', error);
+                }
+            }
+            else {
+                console.log('!!!!', selectedDate, startTime)
+            }
+        };
+
+        fetchAndSetReservations();
+    }, [selectedDate, startTime, selectedUsageTime, selectedRoom]);
 
     const usageTimeOptions = [
         { label: '1時間', value: 1 },
@@ -71,10 +126,12 @@ const BuildingSelector: React.FC = () => {
         const newValue = event.target.value;
         setSelectedUsageTime(newValue === null ? null : parseFloat(newValue.toString()));
     };
-    
+
 
     const handleDateClick = (date: string) => {
         setSelectedDate(date);
+        const calendarDate = date ? new Date(date) : new Date();
+        setCalendarDate(calendarDate);
     };
 
     const rooms: { [key in BuildingType]: string[] } = {
@@ -91,6 +148,15 @@ const BuildingSelector: React.FC = () => {
     const handleRoomClick = (room: string) => {
         setSelectedRoom(room);
     };
+
+    const transformedEvents = reservations.map((event: Event) => ({
+        title: event.organizationName,
+        start: new Date(event.startTime),
+        end: new Date(event.endTime),
+        roomName: event.roomName, // roomName を追加
+        // 他の必要な変換
+    }));
+
 
     return (
         <Grid container spacing={2}>
@@ -126,13 +192,13 @@ const BuildingSelector: React.FC = () => {
                 <Typography variant="subtitle1">日にち</Typography>
             </Grid>
             <Grid item xs={10}>
-                {dates.map(date => (
+                {dates.map(({ display, value }) => (
                     <Chip
-                        key={date}
-                        label={date}
-                        onClick={() => handleDateClick(date)} // クリックイベントハンドラを追加
+                        key={display}
+                        label={display}
+                        onClick={() => handleDateClick(value)} // クリックイベントハンドラを追加
                         style={chipStyle}
-                        color={selectedDate === date ? 'primary' : 'default'} // 選択状態を反映
+                        color={selectedDate === value ? 'primary' : 'default'} // 選択状態を反映
                     />
                 ))}
             </Grid>
@@ -140,7 +206,7 @@ const BuildingSelector: React.FC = () => {
                 <Typography variant="subtitle1">開始時刻</Typography>
             </Grid>
             <Grid item xs={10}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <TimePicker
                         label="開始時刻"
                         value={startTime}
@@ -178,6 +244,19 @@ const BuildingSelector: React.FC = () => {
                     )
                 }
             </Grid>
+            <Grid item xs={12}>
+                <Typography variant="h6">予約情報:</Typography>
+                {reservations.map((reservation, index) => (
+                    <Typography key={index}>
+                        {reservation.organizationName} - {reservation.roomName} - {reservation.startTime} - {reservation.endTime}
+                    </Typography>
+                ))}
+            </Grid>
+            <EventCalendar
+                events={transformedEvents}
+                eventColors={{}}
+                date={calendarDate}
+            />
         </Grid >
     );
 };

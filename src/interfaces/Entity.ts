@@ -23,9 +23,9 @@ interface Reservation {
 }
 
 interface Event {
-    id: string;
+    id?: string;
     title: string;
-    color: string;
+    color?: string;
     roomName: string;
     start: Date;
     end: Date;

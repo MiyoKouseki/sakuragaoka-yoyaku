@@ -6,7 +6,6 @@ import moment from 'moment';
 import 'moment/locale/ja';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../../styles/EventCalendarStyles.css';
-import { useMediaQuery } from '@mui/material';
 import CustomHeader from './CustomEventCalendarHeader';
 import { Event } from '../../interfaces/Entity';
 moment.locale('ja');
@@ -14,15 +13,13 @@ moment.locale('ja');
 interface EventCalendarProps {
   events: Event[];
   eventColors: Record<string, string>; // eventColors の型を変更
+  date: Date | string; // date プロパティを追加
 }
 
 const localizer = momentLocalizer(moment);
-const SMALL_SCREEN_SIZE = 800;
 
-const EventCalendar: React.FC<EventCalendarProps> = ({ events, eventColors }) => {
-  const isSmallScreen = useMediaQuery(`(max-width:${SMALL_SCREEN_SIZE}px)`);
-  const defaultView: View = isSmallScreen ? 'day' : 'week';
-  
+const EventCalendar: React.FC<EventCalendarProps> = ({ events, eventColors, date }) => {
+  const defaultView: View = 'day';
   const eventStyleGetter = (event: Event) => {
     const backgroundColor = eventColors[event.roomName];
     return {
