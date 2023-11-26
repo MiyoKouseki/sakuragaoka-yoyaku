@@ -1,5 +1,5 @@
 // YoyakuPage.tsx
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useMemo } from 'react';
 import Chip from '@mui/material/Chip';
 import { Grid, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -19,39 +19,43 @@ type State = {
     startTime: Date | null;
     selectedUsageTime: number | null;
     reservations: Event[];
+    errorMessage: string | null;
 };
 
 type Action =
     | { type: 'SET_BUILDING'; payload: BuildingType }
     | { type: 'SET_ROOM'; payload: string }
     | { type: 'SET_DATE'; payload: string | null }
+    | { type: 'SET_ERROR_MESSAGE'; payload: string | null }
     | { type: 'SET_CALENDAR_DATE'; payload: Date }
     | { type: 'SET_START_TIME'; payload: Date | null }
     | { type: 'SET_USAGE_TIME'; payload: number | null }
     | { type: 'SET_RESERVATIONS'; payload: Event[] };
 
-    const reducer = (state: State, action: Action): State => {
-        switch (action.type) {
-            case 'SET_BUILDING':
-                return { ...state, selectedBuilding: action.payload };
-            case 'SET_ROOM':
-                return { ...state, selectedRoom: action.payload };
-            case 'SET_DATE':
-                return { ...state, selectedDate: action.payload };
-            case 'SET_CALENDAR_DATE':
-                return { ...state, calendarDate: action.payload };
-            case 'SET_START_TIME':
-                return { ...state, startTime: action.payload };
-            case 'SET_USAGE_TIME':
-                return { ...state, selectedUsageTime: action.payload };
-            case 'SET_RESERVATIONS':
-                return { ...state, reservations: action.payload };
-            default:
-                return state;
-        }
-    };
+const reducer = (state: State, action: Action): State => {
+    switch (action.type) {
+        case 'SET_BUILDING':
+            return { ...state, selectedBuilding: action.payload };
+        case 'SET_ROOM':
+            return { ...state, selectedRoom: action.payload };
+        case 'SET_DATE':
+            return { ...state, selectedDate: action.payload };
+        case 'SET_ERROR_MESSAGE':
+            return { ...state, selectedDate: action.payload };
+        case 'SET_CALENDAR_DATE':
+            return { ...state, calendarDate: action.payload };
+        case 'SET_START_TIME':
+            return { ...state, startTime: action.payload };
+        case 'SET_USAGE_TIME':
+            return { ...state, selectedUsageTime: action.payload };
+        case 'SET_RESERVATIONS':
+            return { ...state, reservations: action.payload };
+        default:
+            return state;
+    }
+};
 
-    
+
 const BuildingSelector = ({
     selectedBuilding,
     onSelectBuilding
@@ -173,20 +177,32 @@ const YoyakuPage: React.FC = () => {
         startTime: getNextHalfHourDate(),
         selectedUsageTime: 1,
         reservations: [],
+        errorMessage: null,
     };
-    
+
     const [state, dispatch] = useReducer(reducer, initialState);
-    
+
+    const startOfDay = useMemo(() => {
+        if (state.selectedDate) {
+            const selectedDate = new Date(state.selectedDate);
+            selectedDate.setHours(0, 0, 0, 0);
+            return selectedDate;
+        }
+        return new Date();
+    }, [state.selectedDate]); // ここで useMemo を使用
+
+    const endOfDay = useMemo(() => {
+        if (state.selectedDate) {
+            const selectedDate = new Date(state.selectedDate);
+            selectedDate.setHours(24, 0, 0, 0);
+            return selectedDate;
+        }
+        return new Date();
+    }, [state.selectedDate]); // ここで useMemo を使用
+
     useEffect(() => {
         const fetchAndSetReservations = async () => {
             if (state.selectedDate && state.startTime) {
-                const startOfDay = new Date(state.selectedDate);
-                startOfDay.setHours(0, 0, 0, 0); // 時、分、秒、ミリ秒を0に設定
-
-                // その日の24時（翌日の0時、日の終わり）
-                const endOfDay = new Date(state.selectedDate);
-                endOfDay.setHours(24, 0, 0, 0); // 時を24に設定し、分、秒、ミリ秒を0に設定
-
                 try {
                     const fetchedReservations = await fetchReservations(
                         state.selectedRoom,
@@ -197,6 +213,7 @@ const YoyakuPage: React.FC = () => {
                     dispatch({ type: 'SET_RESERVATIONS', payload: fetchedReservations });
                 } catch (error) {
                     console.error('Error fetching reservations:', error);
+                    dispatch({ type: 'SET_ERROR_MESSAGE', payload: '予約情報の取得に失敗しました。' });
                 }
             }
             else {
@@ -205,8 +222,8 @@ const YoyakuPage: React.FC = () => {
         };
 
         fetchAndSetReservations();
-    }, [state.selectedDate, state.startTime, state.selectedUsageTime, state.selectedRoom]);
-
+    }, [state.selectedDate, state.startTime, state.selectedUsageTime, state.selectedRoom, startOfDay, endOfDay]);
+    
     const usageTimeOptions = [
         { label: '1時間', value: 1 },
         { label: '1時間30分', value: 1.5 },
@@ -228,11 +245,11 @@ const YoyakuPage: React.FC = () => {
     };
 
 
-    const handleDateClick = (date: string) => {        
-        dispatch({ type: 'SET_DATE', payload: date});
+    const handleDateClick = (date: string) => {
+        dispatch({ type: 'SET_DATE', payload: date });
 
         const calendarDate = date ? new Date(date) : new Date();
-        dispatch({ type: 'SET_CALENDAR_DATE', payload: calendarDate});
+        dispatch({ type: 'SET_CALENDAR_DATE', payload: calendarDate });
     };
 
     const rooms: { [key in BuildingType]: string[] } = {
@@ -250,19 +267,25 @@ const YoyakuPage: React.FC = () => {
         dispatch({ type: 'SET_ROOM', payload: room });
     };
 
-    const transformedEvents = state.reservations.map((event: Event) => ({
-        title: event.organizationName,
-        start: new Date(event.startTime),
-        end: new Date(event.endTime),
-        roomName: event.roomName, // roomName を追加
-        // 他の必要な変換
-    }));
-
+    const transformedEvents = useMemo(() => {
+        return state.reservations.map((event: Event) => ({
+            title: event.organizationName,
+            start: new Date(event.startTime),
+            end: new Date(event.endTime),
+            roomName: event.roomName,
+            // 他の必要な変換
+        }));
+    }, [state.reservations]);
 
     return (
         <Grid container spacing={2}>
             <Grid item xs={2}>
                 <Typography variant="subtitle1">建物</Typography>
+                {state.errorMessage && (
+                    <Grid item xs={12}>
+                        <Typography color="error">{state.errorMessage}</Typography>
+                    </Grid>
+                )}
             </Grid>
             <BuildingSelector
                 selectedBuilding={state.selectedBuilding}
@@ -293,7 +316,7 @@ const YoyakuPage: React.FC = () => {
                     <TimePicker
                         label="開始時刻"
                         value={state.startTime}
-                        onChange={(newTime) => dispatch({ type: 'SET_START_TIME', payload: newTime})}
+                        onChange={(newTime) => dispatch({ type: 'SET_START_TIME', payload: newTime })}
                         minutesStep={30}
                         ampm={false}
                     />
