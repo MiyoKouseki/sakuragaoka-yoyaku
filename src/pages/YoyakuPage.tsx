@@ -11,6 +11,81 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { fetchReservations } from '../services/fetchReservations';
 import EventCalendar from '../components/calendarFeatures/EventCalendar';
 
+
+const BuildingSelector = ({
+    selectedBuilding,
+    onSelectBuilding
+}: {
+    selectedBuilding: BuildingType;
+    onSelectBuilding: (building: BuildingType) => void;
+}) => {
+    return (
+        <Grid item xs={10}>
+            {(['桜ヶ丘体育館', 'サンビレッジ', '建物C'] as BuildingType[]).map(building => (
+                <Chip
+                    key={building}
+                    label={building}
+                    style={chipStyle}
+                    onClick={() => onSelectBuilding(building)}
+                    color={selectedBuilding === building ? 'primary' : 'default'}
+                />
+            ))}
+        </Grid>
+    );
+};
+
+interface RoomSelectorProps {
+    selectedBuilding: BuildingType;
+    selectedRoom: string;
+    onSelectRoom: (room: string) => void;
+    rooms: { [key in BuildingType]: string[] }; // この行を追加
+}
+
+const RoomSelector: React.FC<RoomSelectorProps> = ({
+    selectedBuilding,
+    selectedRoom,
+    onSelectRoom,
+    rooms
+}) => {
+    return (
+        <Grid item xs={10}>
+            {rooms[selectedBuilding].map(room => (
+                <Chip
+                    key={room}
+                    label={room}
+                    onClick={() => onSelectRoom(room)}
+                    style={chipStyle}
+                    color={selectedRoom === room ? 'primary' : 'default'}
+                />
+            ))}
+        </Grid>
+    );
+};
+
+const DateSelector = ({
+    dates,
+    selectedDate,
+    onSelectDate
+}: {
+    dates: { display: string; value: string }[];
+    selectedDate: string | null;
+    onSelectDate: (date: string) => void;
+}) => {
+    return (
+        <Grid item xs={10}>
+            {dates.map(({ display, value }) => (
+                <Chip
+                    key={display}
+                    label={display}
+                    onClick={() => onSelectDate(value)}
+                    style={chipStyle}
+                    color={selectedDate === value ? 'primary' : 'default'}
+                />
+            ))}
+        </Grid>
+    );
+};
+
 interface Event {
     organizationName: string;
     roomName: string;
@@ -42,15 +117,6 @@ const chipStyle = {
 type BuildingType = '桜ヶ丘体育館' | 'サンビレッジ' | '建物C';
 const dates = generateDates();
 
-const formatTime = (date: Date | null) => {
-    if (date) {
-        const hours = date.getHours().toString().padStart(2, '0'); // 時間を2桁で表記
-        const minutes = date.getMinutes().toString().padStart(2, '0'); // 分を2桁で表記
-        return `${hours}:${minutes}`; // "HH:mm" 形式で返す
-    }
-    return '';
-};
-
 const getNextHalfHourDate = () => {
     const now = new Date();
     const minutes = now.getMinutes();
@@ -58,7 +124,7 @@ const getNextHalfHourDate = () => {
     return nextHalfHour;
 };
 
-const BuildingSelector: React.FC = () => {
+const YoyakuPage: React.FC = () => {
     const [selectedBuilding, setSelectedBuilding] = useState<BuildingType>('桜ヶ丘体育館');
     const [selectedRoom, setSelectedRoom] = useState<string>('体育室A面');
     const today = format(new Date(), 'yyyy-MM-dd', { locale: ja }); // 例: "2023-11-26"
@@ -72,9 +138,6 @@ const BuildingSelector: React.FC = () => {
     useEffect(() => {
         const fetchAndSetReservations = async () => {
             if (selectedDate && startTime) {
-                const combinedStartTime = new Date(`${selectedDate}T${formatTime(startTime)}`);
-                const usageTimeInHours = selectedUsageTime != null ? selectedUsageTime : 1;
-                const combinedEndTime = new Date(combinedStartTime.getTime() + usageTimeInHours * 3600000);
                 const startOfDay = new Date(selectedDate);
                 startOfDay.setHours(0, 0, 0, 0); // 時、分、秒、ミリ秒を0に設定
 
@@ -88,7 +151,7 @@ const BuildingSelector: React.FC = () => {
                         startOfDay.toISOString(),
                         endOfDay.toISOString()
                     );
-                    
+
 
                     setReservations(fetchedReservations);
                 } catch (error) {
@@ -163,45 +226,27 @@ const BuildingSelector: React.FC = () => {
             <Grid item xs={2}>
                 <Typography variant="subtitle1">建物</Typography>
             </Grid>
-            <Grid item xs={10}>
-                {(['桜ヶ丘体育館', 'サンビレッジ', '建物C'] as BuildingType[]).map(building => (
-                    <Chip
-                        key={building}
-                        label={building}
-                        style={chipStyle}
-                        onClick={() => handleBuildingClick(building)}
-                        color={selectedBuilding === building ? 'primary' : 'default'}
-                    />
-                ))}
-            </Grid>
+            <BuildingSelector
+                selectedBuilding={selectedBuilding}
+                onSelectBuilding={handleBuildingClick}
+            />
             <Grid item xs={2}>
                 <Typography variant="subtitle1">部屋</Typography>
             </Grid>
-            <Grid item xs={10}>
-                {rooms[selectedBuilding].map(room => (
-                    <Chip
-                        key={room}
-                        label={room}
-                        onClick={() => handleRoomClick(room)}
-                        style={chipStyle}
-                        color={selectedRoom === room ? 'primary' : 'default'}
-                    />
-                ))}
-            </Grid>
+            <RoomSelector
+                selectedBuilding={selectedBuilding}
+                selectedRoom={selectedRoom}
+                onSelectRoom={handleRoomClick}
+                rooms={rooms}
+            />
             <Grid item xs={2}>
                 <Typography variant="subtitle1">日にち</Typography>
             </Grid>
-            <Grid item xs={10}>
-                {dates.map(({ display, value }) => (
-                    <Chip
-                        key={display}
-                        label={display}
-                        onClick={() => handleDateClick(value)} // クリックイベントハンドラを追加
-                        style={chipStyle}
-                        color={selectedDate === value ? 'primary' : 'default'} // 選択状態を反映
-                    />
-                ))}
-            </Grid>
+            <DateSelector
+                dates={dates}
+                selectedDate={selectedDate}
+                onSelectDate={handleDateClick}
+            />
             <Grid item xs={2}>
                 <Typography variant="subtitle1">開始時刻</Typography>
             </Grid>
@@ -261,4 +306,4 @@ const BuildingSelector: React.FC = () => {
     );
 };
 
-export default BuildingSelector;
+export default YoyakuPage;
