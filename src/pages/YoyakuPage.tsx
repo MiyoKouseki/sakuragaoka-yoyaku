@@ -1,15 +1,11 @@
 // YoyakuPage.tsx
 import React, { useReducer, useEffect, useMemo } from 'react';
 import Chip from '@mui/material/Chip';
-import { Grid, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
+import { Grid, Typography } from '@mui/material';
 import { format, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { fetchReservations } from '../services/fetchReservations';
-import EventCalendar from '../components/calendarFeatures/EventCalendar';
+import SimpleCalendar from '../components/calendarFeatures/SimpleCalendar';
 
 type State = {
     selectedBuilding: BuildingType;
@@ -223,26 +219,6 @@ const YoyakuPage: React.FC = () => {
 
         fetchAndSetReservations();
     }, [state.selectedDate, state.startTime, state.selectedUsageTime, state.selectedRoom, startOfDay, endOfDay]);
-    
-    const usageTimeOptions = [
-        { label: '1時間', value: 1 },
-        { label: '1時間30分', value: 1.5 },
-        { label: '2時間', value: 2 },
-        { label: '2時間30分', value: 2.5 },
-        { label: '3時間', value: 3 },
-        { label: '3時間30分', value: 3.5 },
-        { label: '4時間', value: 4 },
-        { label: '4時間30分', value: 4.5 },
-        { label: '5時間', value: 5 },
-        { label: '5時間30分', value: 5.5 },
-        { label: '6時間', value: 6 },
-    ];
-
-    const handleUsageTimeChange = (event: SelectChangeEvent<number | null>) => {
-        const newValue = event.target.value;
-        dispatch({ type: 'SET_USAGE_TIME', payload: newValue === null ? null : parseFloat(newValue.toString()) });
-
-    };
 
 
     const handleDateClick = (date: string) => {
@@ -266,16 +242,6 @@ const YoyakuPage: React.FC = () => {
     const handleRoomClick = (room: string) => {
         dispatch({ type: 'SET_ROOM', payload: room });
     };
-
-    const transformedEvents = useMemo(() => {
-        return state.reservations.map((event: Event) => ({
-            title: event.organizationName,
-            start: new Date(event.startTime),
-            end: new Date(event.endTime),
-            roomName: event.roomName,
-            // 他の必要な変換
-        }));
-    }, [state.reservations]);
 
     return (
         <Grid container spacing={2}>
@@ -303,66 +269,24 @@ const YoyakuPage: React.FC = () => {
             <Grid item xs={2}>
                 <Typography variant="subtitle1">日にち</Typography>
             </Grid>
-            <DateSelector
-                dates={dates}
-                selectedDate={state.selectedDate}
-                onSelectDate={handleDateClick}
-            />
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">開始時刻</Typography>
-            </Grid>
             <Grid item xs={10}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <TimePicker
-                        label="開始時刻"
-                        value={state.startTime}
-                        onChange={(newTime) => dispatch({ type: 'SET_START_TIME', payload: newTime })}
-                        minutesStep={30}
-                        ampm={false}
+                <DateSelector
+                    dates={dates}
+                    selectedDate={state.selectedDate}
+                    onSelectDate={handleDateClick}
+                />
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle1">利用可能時間</Typography>
+            </Grid>
+            <Grid item xs={10} container justifyContent="left">
+                <Grid item xs={10}>
+                    <SimpleCalendar
+                        date={state.selectedDate ? new Date(state.selectedDate) : new Date()} // nullチェックを追加
+                        reservations={state.reservations}
                     />
-                </LocalizationProvider>
+                </Grid>
             </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">利用時間</Typography>
-            </Grid>
-            <Grid item xs={10}>
-                <FormControl>
-                    <InputLabel id="usage-time-label">利用時間</InputLabel>
-                    <Select
-                        labelId="usage-time-label"
-                        value={state.selectedUsageTime}
-                        onChange={handleUsageTimeChange}
-                    >
-                        {usageTimeOptions.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Grid >
-            <Grid item xs={12}>
-                {
-                    state.selectedBuilding && (
-                        <Typography variant="subtitle1">
-                            {state.selectedBuilding},{state.selectedRoom}, {state.selectedDate}, {state.startTime?.toISOString()}, {state.selectedUsageTime}
-                        </Typography>
-                    )
-                }
-            </Grid>
-            <Grid item xs={12}>
-                <Typography variant="h6">予約情報:</Typography>
-                {state.reservations.map((reservation, index) => (
-                    <Typography key={index}>
-                        {reservation.organizationName} - {reservation.roomName} - {reservation.startTime} - {reservation.endTime}
-                    </Typography>
-                ))}
-            </Grid>
-            <EventCalendar
-                events={transformedEvents}
-                eventColors={{}}
-                date={state.calendarDate}
-            />
         </Grid >
     );
 };
