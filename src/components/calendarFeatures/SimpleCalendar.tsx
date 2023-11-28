@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Calendar, momentLocalizer, Event as CalendarEvent } from 'react-big-calendar';
+import useAuthState from '../../hooks/useAuthState';
 
 interface Event {
     organizationName: string;
@@ -20,9 +21,10 @@ interface SimpleCalendarProps {
 }
 
 const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ reservations, date }) => {
+    const user = useAuthState();
 
     const events: CalendarEvent[] = reservations.map(reservation => ({
-        title: reservation.organizationName, // または適切なタイトルプロパティ
+        title: user ? reservation.organizationName : "予約済み",
         start: new Date(reservation.startTime), // `startTime`はISO形式の日付文字列を想定
         end: new Date(reservation.endTime), // `endTime`もISO形式の日付文字列を想定
         allDay: false, // または予約が終日のイベントであるかどうかに基づいて
@@ -33,7 +35,7 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ reservations, date }) =
       };
 
     return (
-        <div style={{ height: '600px' }}>
+        <div style={{ height: '800px' }}>
             <Calendar
                 localizer={localizer}
                 events={events}

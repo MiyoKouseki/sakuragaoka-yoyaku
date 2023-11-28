@@ -148,8 +148,8 @@ const generateDates = () => {
 
 
 const chipStyle = {
-    size: 'medium' as const,
-    margin: '3px',
+    size: 'small' as const,
+    margin: '1px',
 };
 
 
@@ -277,7 +277,7 @@ const YoyakuPage: React.FC = () => {
                 />
             </Grid>
             <Grid item xs={2}>
-                <Typography variant="subtitle1">利用可能時間</Typography>
+                <Typography variant="subtitle1">予約状況</Typography>
             </Grid>
             <Grid item xs={10} container justifyContent="left">
                 <Grid item xs={10}>
