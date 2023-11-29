@@ -246,7 +246,7 @@ const YoyakuPage: React.FC = () => {
     return (
         <Grid container spacing={2}>
             <Grid item xs={2}>
-                <Typography variant="subtitle1">建物</Typography>
+                <Typography variant="subtitle1" style={{ textAlign: 'right' }}>建物</Typography>
                 {state.errorMessage && (
                     <Grid item xs={12}>
                         <Typography color="error">{state.errorMessage}</Typography>
@@ -258,7 +258,7 @@ const YoyakuPage: React.FC = () => {
                 onSelectBuilding={handleBuildingClick}
             />
             <Grid item xs={2}>
-                <Typography variant="subtitle1">部屋</Typography>
+                <Typography variant="subtitle1" style={{ textAlign: 'right' }}>部屋</Typography>
             </Grid>
             <RoomSelector
                 selectedBuilding={state.selectedBuilding}
@@ -267,7 +267,7 @@ const YoyakuPage: React.FC = () => {
                 rooms={rooms}
             />
             <Grid item xs={2}>
-                <Typography variant="subtitle1">日にち</Typography>
+                <Typography variant="subtitle1" style={{ textAlign: 'right' }}>日にち</Typography>
             </Grid>
             <Grid item xs={10}>
                 <DateSelector
@@ -277,7 +277,7 @@ const YoyakuPage: React.FC = () => {
                 />
             </Grid>
             <Grid item xs={2}>
-                <Typography variant="subtitle1">予約状況</Typography>
+                <Typography variant="subtitle1" style={{ textAlign: 'right' }}>予約状況</Typography>
             </Grid>
             <Grid item xs={10} container justifyContent="left">
                 <Grid item xs={10}>
