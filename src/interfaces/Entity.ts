@@ -31,6 +31,8 @@ interface Event {
     end: Date;
 }
 
+
+
 export interface SubmitDataParams<T> {
     collectionName: string;
     data: T;

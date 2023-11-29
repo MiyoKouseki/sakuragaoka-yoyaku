@@ -1,138 +1,16 @@
 // YoyakuPage.tsx
 import React, { useReducer, useEffect, useMemo } from 'react';
-import Chip from '@mui/material/Chip';
 import { Grid, Typography } from '@mui/material';
 import { format, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { fetchReservations } from '../services/fetchReservations';
 import SimpleCalendar from '../components/calendarFeatures/SimpleCalendar';
-
-type State = {
-    selectedBuilding: BuildingType;
-    selectedRoom: string;
-    selectedDate: string | null;
-    calendarDate: Date;
-    startTime: Date | null;
-    selectedUsageTime: number | null;
-    reservations: Event[];
-    errorMessage: string | null;
-};
-
-type Action =
-    | { type: 'SET_BUILDING'; payload: BuildingType }
-    | { type: 'SET_ROOM'; payload: string }
-    | { type: 'SET_DATE'; payload: string | null }
-    | { type: 'SET_ERROR_MESSAGE'; payload: string | null }
-    | { type: 'SET_CALENDAR_DATE'; payload: Date }
-    | { type: 'SET_START_TIME'; payload: Date | null }
-    | { type: 'SET_USAGE_TIME'; payload: number | null }
-    | { type: 'SET_RESERVATIONS'; payload: Event[] };
-
-const reducer = (state: State, action: Action): State => {
-    switch (action.type) {
-        case 'SET_BUILDING':
-            return { ...state, selectedBuilding: action.payload };
-        case 'SET_ROOM':
-            return { ...state, selectedRoom: action.payload };
-        case 'SET_DATE':
-            return { ...state, selectedDate: action.payload };
-        case 'SET_ERROR_MESSAGE':
-            return { ...state, selectedDate: action.payload };
-        case 'SET_CALENDAR_DATE':
-            return { ...state, calendarDate: action.payload };
-        case 'SET_START_TIME':
-            return { ...state, startTime: action.payload };
-        case 'SET_USAGE_TIME':
-            return { ...state, selectedUsageTime: action.payload };
-        case 'SET_RESERVATIONS':
-            return { ...state, reservations: action.payload };
-        default:
-            return state;
-    }
-};
-
-
-const BuildingSelector = ({
-    selectedBuilding,
-    onSelectBuilding
-}: {
-    selectedBuilding: BuildingType;
-    onSelectBuilding: (building: BuildingType) => void;
-}) => {
-    return (
-        <Grid item xs={10}>
-            {(['桜ヶ丘体育館', 'サンビレッジ', '建物C'] as BuildingType[]).map(building => (
-                <Chip
-                    key={building}
-                    label={building}
-                    style={chipStyle}
-                    onClick={() => onSelectBuilding(building)}
-                    color={selectedBuilding === building ? 'primary' : 'default'}
-                />
-            ))}
-        </Grid>
-    );
-};
-
-interface RoomSelectorProps {
-    selectedBuilding: BuildingType;
-    selectedRoom: string;
-    onSelectRoom: (room: string) => void;
-    rooms: { [key in BuildingType]: string[] }; // この行を追加
-}
-
-const RoomSelector: React.FC<RoomSelectorProps> = ({
-    selectedBuilding,
-    selectedRoom,
-    onSelectRoom,
-    rooms
-}) => {
-    return (
-        <Grid item xs={10}>
-            {rooms[selectedBuilding].map(room => (
-                <Chip
-                    key={room}
-                    label={room}
-                    onClick={() => onSelectRoom(room)}
-                    style={chipStyle}
-                    color={selectedRoom === room ? 'primary' : 'default'}
-                />
-            ))}
-        </Grid>
-    );
-};
-
-const DateSelector = ({
-    dates,
-    selectedDate,
-    onSelectDate
-}: {
-    dates: { display: string; value: string }[];
-    selectedDate: string | null;
-    onSelectDate: (date: string) => void;
-}) => {
-    return (
-        <Grid item xs={10}>
-            {dates.map(({ display, value }) => (
-                <Chip
-                    key={display}
-                    label={display}
-                    onClick={() => onSelectDate(value)}
-                    style={chipStyle}
-                    color={selectedDate === value ? 'primary' : 'default'}
-                />
-            ))}
-        </Grid>
-    );
-};
-
-interface Event {
-    organizationName: string;
-    roomName: string;
-    startTime: string;
-    endTime: string;
-    // 他の必要なフィールド
-}
+import BuildingSelector from '../components/selectors/BuildingSelector';
+import BuildingType from '../types/buildingTypes';
+import RoomSelector from '../components/selectors/RoomSelector';
+import DateSelector from '../components/selectors/DateSelector';
+import { State } from '../types/reservationState';
+import { reducer } from '../reducers/reservationReducer';
 
 // 今日から7日間の日付と曜日を生成する関数（日本語）
 const generateDates = () => {
@@ -146,15 +24,6 @@ const generateDates = () => {
     });
 };
 
-
-const chipStyle = {
-    size: 'small' as const,
-    margin: '1px',
-};
-
-
-
-type BuildingType = '桜ヶ丘体育館' | 'サンビレッジ' | '建物C';
 const dates = generateDates();
 
 const getNextHalfHourDate = () => {
