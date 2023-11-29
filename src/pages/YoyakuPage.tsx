@@ -13,8 +13,7 @@ import { reducer } from '../reducers/reservationReducer';
 import { generateDates, getNextHalfHourDate } from '../utils/dateUtils';
 import { rooms } from '../data/buildingData';
 import { getStartOfDay, getEndOfDay } from '../utils/dateUtils';
-import { Action } from '../types/reservationActions';
-type ActionType = Action['type'];
+import { PayloadType } from '../types/reservationActions';
 
 const dates = generateDates();
 
@@ -44,7 +43,7 @@ const YoyakuPage: React.FC = () => {
         selectedRoom: string,
         start: string,
         end: string,
-        dispatch: React.Dispatch<Action>
+        dispatch: React.Dispatch<PayloadType>
     ) => {
         try {
             const fetchedReservations = await fetchReservations(selectedRoom, start, end);
@@ -66,8 +65,8 @@ const YoyakuPage: React.FC = () => {
         }
     }, [state.selectedDate, state.startTime, state.selectedRoom, startOfDay, endOfDay, dispatch]);
 
-    const handleStateChange = (type: ActionType, payload: any) => {
-        dispatch({ type, payload });
+    const handleStateChange = (action: PayloadType) => {
+        dispatch(action);
     };
 
     return (
@@ -82,7 +81,7 @@ const YoyakuPage: React.FC = () => {
             </Grid>
             <BuildingSelector
                 selectedBuilding={state.selectedBuilding}
-                onSelectBuilding={(building) => handleStateChange('SET_BUILDING', building)}
+                onSelectBuilding={(building) => handleStateChange({ type: 'SET_BUILDING', payload: building })}
             />
             <Grid item xs={2}>
                 <Typography variant="subtitle1" style={{ textAlign: 'right' }}>部屋</Typography>
@@ -90,7 +89,7 @@ const YoyakuPage: React.FC = () => {
             <RoomSelector
                 selectedBuilding={state.selectedBuilding}
                 selectedRoom={state.selectedRoom}
-                onSelectRoom={(room) => handleStateChange('SET_ROOM', room)}
+                onSelectRoom={(room) => handleStateChange({ type: 'SET_ROOM', payload: room })}
                 rooms={rooms}
             />
             <Grid item xs={2}>
@@ -100,7 +99,7 @@ const YoyakuPage: React.FC = () => {
                 <DateSelector
                     dates={dates}
                     selectedDate={state.selectedDate}
-                    onSelectDate={(date) => handleStateChange('SET_DATE', date)}
+                    onSelectDate={(date) => handleStateChange({ type: 'SET_DATE', payload: date })}
                 />
             </Grid>
             <Grid item xs={2}>
