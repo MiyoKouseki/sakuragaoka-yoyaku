@@ -1,8 +1,8 @@
 //reservationReducer.ts
-import { Action } from '../types/reservationActions';
+import { PayloadType } from '../types/reservationActions';
 import { State } from '../types/reservationState';
 
-export const reducer = (state: State, action: Action): State => {
+export const reducer = (state: State, action: PayloadType): State => {
     switch (action.type) {
         case 'SET_BUILDING':
             return { ...state, selectedBuilding: action.payload };

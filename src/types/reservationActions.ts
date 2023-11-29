@@ -9,12 +9,24 @@ interface Event {
     // 他の必要なフィールド
 }
 
-export type Action =
-    | { type: 'SET_BUILDING'; payload: BuildingType }
-    | { type: 'SET_ROOM'; payload: string }
-    | { type: 'SET_DATE'; payload: string | null }
-    | { type: 'SET_ERROR_MESSAGE'; payload: string | null }
-    | { type: 'SET_CALENDAR_DATE'; payload: Date }
-    | { type: 'SET_START_TIME'; payload: Date | null }
-    | { type: 'SET_USAGE_TIME'; payload: number | null }
-    | { type: 'SET_RESERVATIONS'; payload: Event[] };
+
+export type State = {
+    selectedBuilding: BuildingType;
+    selectedRoom: string;
+    selectedDate: string | null;
+    calendarDate: Date;
+    startTime: Date | null;
+    selectedUsageTime: number | null;
+    reservations: Event[];
+    errorMessage: string | null;
+};
+
+export type PayloadType =
+    | { type: 'SET_BUILDING'; payload: State['selectedBuilding'] }
+    | { type: 'SET_ROOM'; payload: State['selectedRoom'] }
+    | { type: 'SET_DATE'; payload: State['selectedDate'] }
+    | { type: 'SET_ERROR_MESSAGE'; payload: State['errorMessage'] }
+    | { type: 'SET_CALENDAR_DATE'; payload: State['calendarDate'] }
+    | { type: 'SET_START_TIME'; payload: State['startTime'] }
+    | { type: 'SET_USAGE_TIME'; payload: State['selectedUsageTime'] }
+    | { type: 'SET_RESERVATIONS'; payload: State['reservations'] };   
