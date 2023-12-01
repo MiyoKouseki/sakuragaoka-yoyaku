@@ -1,13 +1,12 @@
-//RoomSelector.tsx
-import BuildingType from "../../types/buildingTypes";
-import { Grid,Chip } from "@mui/material";
-import { chipStyle } from "../../styles/commonStyles";
+import React from 'react';
+import BuildingType from '../../types/buildingTypes';
+import { Grid, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
 interface RoomSelectorProps {
     selectedBuilding: BuildingType;
     selectedRoom: string;
     onSelectRoom: (room: string) => void;
-    rooms: { [key in BuildingType]: string[] }; // この行を追加
+    rooms: { [key in BuildingType]: string[] };
 }
 
 const RoomSelector: React.FC<RoomSelectorProps> = ({
@@ -18,16 +17,24 @@ const RoomSelector: React.FC<RoomSelectorProps> = ({
 }) => {
     return (
         <Grid item xs={10}>
-            {rooms[selectedBuilding].map(room => (
-                <Chip
-                    key={room}
-                    label={room}
-                    onClick={() => onSelectRoom(room)}
-                    style={chipStyle}
-                    color={selectedRoom === room ? 'primary' : 'default'}
-                />
-            ))}
+            <FormControl fullWidth>
+                <InputLabel id="room-selector-label">部屋を選択</InputLabel>
+                <Select
+                    labelId="room-selector-label"
+                    id="room-selector"
+                    value={selectedRoom}
+                    label="部屋を選択"
+                    onChange={(e) => onSelectRoom(e.target.value as string)}
+                >
+                    {rooms[selectedBuilding].map((room) => (
+                        <MenuItem key={room} value={room}>
+                            {room}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
         </Grid>
     );
 };
+
 export default RoomSelector;

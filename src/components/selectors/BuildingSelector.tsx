@@ -1,8 +1,6 @@
-//BuildingSelector.tsx
-import { Grid } from '@mui/material';
-import Chip from '@mui/material/Chip';
+import React from 'react';
+import { Grid, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import BuildingType from '../../types/buildingTypes';
-import { chipStyle } from '../../styles/commonStyles';
 
 const BuildingSelector = ({
     selectedBuilding,
@@ -13,15 +11,22 @@ const BuildingSelector = ({
 }) => {
     return (
         <Grid item xs={10}>
-            {(['桜ヶ丘体育館', 'サンビレッジ', '建物C'] as BuildingType[]).map(building => (
-                <Chip
-                    key={building}
-                    label={building}
-                    style={chipStyle}
-                    onClick={() => onSelectBuilding(building)}
-                    color={selectedBuilding === building ? 'primary' : 'default'}
-                />
-            ))}
+            <FormControl fullWidth>
+                <InputLabel id="building-selector-label">建物を選択</InputLabel>
+                <Select
+                    labelId="building-selector-label"
+                    id="building-selector"
+                    value={selectedBuilding}
+                    label="建物を選択"
+                    onChange={(e) => onSelectBuilding(e.target.value as BuildingType)}
+                >
+                    {(['桜ヶ丘体育館', 'サンビレッジ', '建物C'] as BuildingType[]).map((building) => (
+                        <MenuItem key={building} value={building}>
+                            {building}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
         </Grid>
     );
 };
