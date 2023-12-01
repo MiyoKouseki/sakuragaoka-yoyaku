@@ -14,6 +14,7 @@ import { generateDates, getNextHalfHourDate } from '../utils/dateUtils';
 import { rooms } from '../data/buildingData';
 import { getStartOfDay, getEndOfDay } from '../utils/dateUtils';
 import { PayloadType } from '../types/reservationActions';
+import useReservationData from '../hooks/useReservationData';
 
 const dates = generateDates();
 
@@ -39,31 +40,7 @@ const YoyakuPage: React.FC = () => {
         return state.selectedDate ? getEndOfDay(state.selectedDate) : new Date();
     }, [state.selectedDate]);
 
-    const fetchAndSetReservations = async (
-        selectedRoom: string,
-        start: string,
-        end: string,
-        dispatch: React.Dispatch<PayloadType>
-    ) => {
-        try {
-            const fetchedReservations = await fetchReservations(selectedRoom, start, end);
-            dispatch({ type: 'SET_RESERVATIONS', payload: fetchedReservations });
-        } catch (error) {
-            console.error('Error fetching reservations:', error);
-            dispatch({ type: 'SET_ERROR_MESSAGE', payload: '予約情報の取得に失敗しました。' });
-        }
-    };
-
-    useEffect(() => {
-        if (state.selectedDate && state.startTime) {
-            fetchAndSetReservations(
-                state.selectedRoom,
-                startOfDay.toISOString(),
-                endOfDay.toISOString(),
-                dispatch
-            );
-        }
-    }, [state.selectedDate, state.startTime, state.selectedRoom, startOfDay, endOfDay, dispatch]);
+    const { reservations, errorMessage } = useReservationData(state.selectedRoom, startOfDay, endOfDay);
 
     const handleStateChange = (action: PayloadType) => {
         dispatch(action);
