@@ -14,7 +14,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({ selectedDate, onSelectDate 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
-        label="Controlled picker"
+        label="日にちを選択"
         value={selectedDate}
         onChange={onSelectDate}
       />
