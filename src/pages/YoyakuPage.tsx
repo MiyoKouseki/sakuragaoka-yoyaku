@@ -5,24 +5,14 @@ import SimpleCalendar from '../components/calendarFeatures/SimpleCalendar';
 import BuildingSelector from '../components/selectors/BuildingSelector';
 import RoomSelector from '../components/selectors/RoomSelector';
 import DateSelector from '../components/selectors/DateSelector';
-import { State } from '../types/reservationState';
 import { reducer } from '../reducers/reservationReducer';
 import { rooms } from '../data/buildingData';
 import { PayloadType } from '../types/reservationActions';
 import { fetchReservations } from '../services/fetchReservations';
+import { loadInitialState } from '../reducers/loadInitialState';
 
 const YoyakuPage: React.FC = () => {
-    const initialState: State = {
-        selectedBuilding: '桜ヶ丘体育館',
-        selectedRoom: '体育室A面',
-        selectedDate: new Date(),
-        calendarDate: new Date(),
-        startTime: new Date(),
-        selectedUsageTime: 1,
-        reservations: [],
-        errorMessage: null,
-    };
-
+    const initialState = loadInitialState();
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const handleStateChange = (action: PayloadType) => {
@@ -44,6 +34,9 @@ const YoyakuPage: React.FC = () => {
             });
     }, [state.selectedRoom, state.selectedDate]);
 
+    useEffect(() => {
+        sessionStorage.setItem('reservationState', JSON.stringify(state));
+    }, [state]);
 
     return (
         <Grid container spacing={2}>

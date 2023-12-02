@@ -3,6 +3,8 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Calendar, momentLocalizer, Event as CalendarEvent } from 'react-big-calendar';
 import useAuthState from '../../hooks/useAuthState';
+import { useNavigate } from 'react-router-dom';
+
 
 interface Event {
     organizationName: string;
@@ -22,6 +24,8 @@ interface SimpleCalendarProps {
 
 const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ reservations, date }) => {
     const user = useAuthState();
+    const navigate = useNavigate();
+
     const events: CalendarEvent[] = reservations.map(reservation => ({
         title: user ? reservation.organizationName : "予約済み",
         start: new Date(reservation.startTime), // `startTime`はISO形式の日付文字列を想定
@@ -30,8 +34,14 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ reservations, date }) =
         // ここに他の必要なプロパティを追加
     }));
     const handleNavigate = (newDate: Date) => {
-        // ナビゲーション時の処理をここに記述
       };
+
+
+    const handleEventSelect = () => {
+        navigate('/reservations/register');
+
+    };
+
 
     return (
         <div style={{ height: '400px' }}>
@@ -47,6 +57,7 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ reservations, date }) =
                 toolbar={false}
                 min={moment().hour(8).minute(0).toDate()}
                 max={moment().hour(22).minute(0).toDate()}
+                onSelectEvent={handleEventSelect}
             />
         </div>
     );
