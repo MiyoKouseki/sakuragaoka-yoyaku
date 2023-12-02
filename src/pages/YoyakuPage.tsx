@@ -82,11 +82,20 @@ const YoyakuPage: React.FC = () => {
             </Grid>
             <Grid item xs={10} container justifyContent="left">
                 <Grid item xs={10}>
+                    <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
+                        {state.reservations.length} 件の予約が見つかりました。
+                    </Typography>
+                </Grid>            
+            </Grid>
+            <Grid item xs={2}>
+            </Grid>
+            <Grid item xs={10} container justifyContent="left">
+                <Grid item xs={10}>
                     <SimpleCalendar
                         date={state.selectedDate ? new Date(state.selectedDate) : new Date()}
                         reservations={state.reservations}
                     />
-                </Grid>
+                </Grid>            
             </Grid>
         </Grid >
     );

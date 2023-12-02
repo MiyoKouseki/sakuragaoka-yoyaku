@@ -34,7 +34,7 @@ const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ reservations, date }) =
       };
 
     return (
-        <div style={{ height: '800px' }}>
+        <div style={{ height: '400px' }}>
             <Calendar
                 localizer={localizer}
                 events={events}
