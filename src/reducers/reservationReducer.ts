@@ -11,7 +11,7 @@ export const reducer = (state: State, action: PayloadType): State => {
         case 'SET_DATE':
             return { ...state, selectedDate: action.payload };
         case 'SET_ERROR_MESSAGE':
-            return { ...state, selectedDate: action.payload };
+            return { ...state, errorMessage: action.payload };
         case 'SET_CALENDAR_DATE':
             return { ...state, calendarDate: action.payload };
         case 'SET_START_TIME':

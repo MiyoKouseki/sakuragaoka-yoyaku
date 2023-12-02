@@ -22,7 +22,6 @@ interface SimpleCalendarProps {
 
 const SimpleCalendar: React.FC<SimpleCalendarProps> = ({ reservations, date }) => {
     const user = useAuthState();
-
     const events: CalendarEvent[] = reservations.map(reservation => ({
         title: user ? reservation.organizationName : "予約済み",
         start: new Date(reservation.startTime), // `startTime`はISO形式の日付文字列を想定

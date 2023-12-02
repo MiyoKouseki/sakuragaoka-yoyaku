@@ -1,28 +1,25 @@
 //DateSelector.tsx
-import { Grid,Chip } from "@mui/material";
-import { chipStyle } from "../../styles/commonStyles";
+import * as React from 'react';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-const DateSelector = ({
-    dates,
-    selectedDate,
-    onSelectDate
-}: {
-    dates: { display: string; value: string }[];
-    selectedDate: string | null;
-    onSelectDate: (date: string) => void;
-}) => {
-    return (
-        <Grid item xs={10}>
-            {dates.map(({ display, value }) => (
-                <Chip
-                    key={display}
-                    label={display}
-                    onClick={() => onSelectDate(value)}
-                    style={chipStyle}
-                    color={selectedDate === value ? 'primary' : 'default'}
-                />
-            ))}
-        </Grid>
-    );
-};
-export default DateSelector;
+interface DateSelectorProps {
+  selectedDate: Date | null;
+  onSelectDate: (date: Date | null) => void;
+}
+
+const DateSelector: React.FC<DateSelectorProps> = ({ selectedDate, onSelectDate }) => {
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <DatePicker
+        label="Controlled picker"
+        value={selectedDate}
+        onChange={onSelectDate}
+      />
+    </LocalizationProvider>
+  );
+}
+
+export default DateSelector

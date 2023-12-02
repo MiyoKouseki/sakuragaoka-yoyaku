@@ -14,7 +14,7 @@ interface Event {
 export type State = {
     selectedBuilding: BuildingType;
     selectedRoom: string;
-    selectedDate: string | null;
+    selectedDate: Date | null;
     calendarDate: Date;
     startTime: Date | null;
     selectedUsageTime: number | null;
