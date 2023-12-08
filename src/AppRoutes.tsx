@@ -12,12 +12,13 @@ import RoomRegisterForm from './components/forms/Room/RoomRegisterForm';
 import RoomList from './pages/RoomPage';
 import RoomEditForm from './components/forms/Room/RoomEditForm';
 import LoginPage from './pages/LoginPage';
-//import FrontPage from './FrontPage';
+import FrontPage from './pages/FrontPage';
 
 const AppRoutes: React.FC = () => {
     return (
         <Routes>
-            <Route path="/" element={<YoyakuPage />} />
+            <Route path="/" element={<FrontPage />} />
+            <Route path="/search" element={<YoyakuPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/reservations/register" element={<ReservationForm />} />
             <Route path="/reservations/list" element={<ReservationList />} />
