@@ -1,3 +1,4 @@
+//ActivityCalendar.tsx
 import React from 'react';
 import { Container, Box, Typography, Grid, Divider } from '@mui/material';
 
@@ -66,7 +67,7 @@ const ActivityLegend: React.FC = () => {
                     <Box sx={{
                         width: 15,
                         height: 15,
-                        backgroundColor: colors[5], // 予約不可の色（赤色）
+                        backgroundColor: colors[5],
                         borderRadius: '4px',
                     }} />
                 </Grid>
@@ -79,14 +80,13 @@ const ScheduleCell: React.FC<ScheduleCellProps> = ({ scheduleStatus , label}) =>
     return (
         <Box
             sx={{
-                flexGrow: 1, // セルが利用可能なスペースを均等に埋めるように設定
                 width: 40,
                 height: 30,
                 backgroundColor: colors[scheduleStatus] || 'transparent',
                 borderRadius: '4px',
-                display: 'flex', // 追加
-                alignItems: 'center', // 追加
-                justifyContent: 'center', // 追加
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
             }}
         >
             <Typography variant="caption">{label}</Typography>
@@ -101,20 +101,6 @@ const ScheduleRow: React.FC<ScheduleRowProps> = ({ cellStatuses, dayLabels }) =>
             {cellStatuses.map((status, index) => (
                 <Grid item key={index}>
                     <ScheduleCell scheduleStatus={status} label={dayLabels[index]} />
-                </Grid>
-            ))}
-        </Grid>
-    );
-};
-
-
-
-const DayLabelsRow: React.FC<{ dayLabels: string[] }> = ({ dayLabels }) => {
-    return (
-        <Grid container alignItems="center" spacing={1}>
-            {dayLabels.map((label, index) => (
-                <Grid item key={index} style={{ width: 40, textAlign: 'center' }}>
-                    <Typography>{label}</Typography>
                 </Grid>
             ))}
         </Grid>
