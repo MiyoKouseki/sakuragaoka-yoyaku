@@ -1,7 +1,5 @@
-//ActivityCalendar.tsx
 import React from 'react';
-import styled from 'styled-components';
-
+import { Container, Box, Typography, Grid } from '@mui/material';
 
 // ScheduleCellコンポーネントの定義
 type ScheduleCellProps = {
@@ -16,16 +14,17 @@ type ScheduleRowProps = {
     rowLabel?: string;
 };
 
+export type ScheduleData = {
+    rowLabel: string;
+    cellStatuses: number[];
+    dayLabels?: string[];
+};
 
+type ActivityCalendarProps = {
+    scheduleData: ScheduleData[]; // 複数のスケジュールデータを受け取る
+}; 
 
 // 凡例の色定義
-const legendColors: string[] = [
-    '#EBEDF0', // 最も薄い色（活動なし）
-    '#9BE9A8', // 薄い色（少ない活動）
-    '#40C463', // 中間の色（中程度の活動）
-    '#30A14E', // 濃い色（多い活動）
-    '#216E39', // 最も濃い色（非常に多い活動）
-];
 const colors: { [key: number]: string } = {
     0: '#EBEDF0', // 予定なし（淡い緑色）
     1: '#9BE9A8', // 予定があるが空きあり（少し濃い緑色）
@@ -35,103 +34,93 @@ const colors: { [key: number]: string } = {
     5: '#FFB6C1', // 予定が埋まっている（淡い赤色）
 };
 
-
-const StyledCell = styled.div<{ $scheduleStatus: number }>`
-    width: 30px;
-    height: 30px;
-    margin: 3px;
-    background-color: ${({ $scheduleStatus }) => colors[$scheduleStatus] || 'transparent'};
-    border-radius: 4px;
-`;
-
-const StyledText = styled.div`
-    height: 30px; // StyledCellと同じ高さに設定
-    line-height: 30px; // テキストを縦方向の中央に配置
-    margin-right: 8px; // テキストとセルの間のマージン
-    white-space: nowrap; // テキストを一行で表示
-    display: flex;
-    align-items: center; // 中央揃え
-    justify-content: center; // テキストが中央に来るように
-`;
-
-const StyledDayLabel = styled.div`
-    text-align: center;
-    font-size: 12px;
-    margin-bottom: 2px; // 日にちラベルとセルの間のマージン
-`;
-
-const StyledRow = styled.div`
-    display: flex;
-    align-items: center;
-`;
-
-// テキストラベルを表示するためのスタイル付きコンポーネント
-const LegendLabel = styled.span`
-    margin-right: 10px;
-    font-size: 12px;
-`;
-
-const LegendRow = styled.div`
-    display: flex;
-    align-items: center; // 子要素を縦方向に中央揃えにする
-    margin-bottom: 5px; // 行間のマージンを調整
-`;
-
 const ScheduleCell: React.FC<ScheduleCellProps> = ({ scheduleStatus, dayLabel }) => {
     return (
-        <div>
-            {dayLabel && <StyledDayLabel>{dayLabel}</StyledDayLabel>}
-            <StyledCell $scheduleStatus={scheduleStatus} />
-        </div>
+        <Box sx={{ marginBottom: 1 }}>
+            <Box sx={{
+                width: 30,
+                height: 30,
+                backgroundColor: colors[scheduleStatus] || 'transparent',
+                borderRadius: '4px'
+            }} />
+        </Box>
     );
 };
 
-const ScheduleRow: React.FC<ScheduleRowProps> = ({ cellStatuses, dayLabels, rowLabel }) => {
+const ScheduleRow: React.FC<ScheduleRowProps> = ({ cellStatuses, rowLabel }) => {
     return (
-        <StyledRow>
-            {rowLabel && <StyledText>{rowLabel}</StyledText>}
+        <Grid container alignItems="center" spacing={1}>
+            {rowLabel && (
+                <Grid item sx={{ display: 'flex', alignItems: 'center', height: 30 }}>
+                    <Typography>{rowLabel}</Typography>
+                </Grid>
+            )}
             {cellStatuses.map((status, index) => (
-                <ScheduleCell key={index} scheduleStatus={status} dayLabel={dayLabels ? dayLabels[index] : undefined} />
+                <Grid item key={index}>
+                    <ScheduleCell scheduleStatus={status} />
+                </Grid>
             ))}
-        </StyledRow>
+        </Grid>
     );
 };
 
-// 凡例のセルを表示するためのスタイル付きコンポーネント
-const LegendCell = styled.div<{ color: string }>`
-    width: 20px;
-    height: 20px;
-    background-color: ${({ color }) => color};
-    margin: 2px;
-    border-radius: 4px;
-`;
-
-// 凡例全体を表示するためのスタイル付きコンポーネント
-const LegendWrapper = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px; // レイアウトの調整
-`;
-
-// 凡例コンポーネント
 const ActivityLegend: React.FC = () => {
     return (
-        <LegendWrapper>
-            <LegendRow>
-                <LegendLabel>予約状況</LegendLabel>
-                <LegendLabel>少</LegendLabel>
-                {legendColors.map((color, index) => (
-                    <LegendCell key={index} color={color} />
+        <Box sx={{ marginBottom: 2 }}>
+            <Grid container alignItems="center" spacing={1}>
+                <Grid item>
+                    <Typography variant="caption">予約状況</Typography>
+                </Grid>
+                <Grid item>
+                    <Typography variant="caption">少</Typography>
+                </Grid>
+                {Object.entries(colors).slice(0, -1).map(([status, color], index) => (
+                    <Grid item key={index}>
+                        <Box sx={{
+                            width: 20,
+                            height: 20,
+                            backgroundColor: color,
+                            borderRadius: '4px',
+                        }} />
+                    </Grid>
                 ))}
-                <LegendLabel>多</LegendLabel>
-            </LegendRow>
-            <LegendRow>
-                <LegendLabel>予約不可</LegendLabel>
-                <LegendCell key={'unavailable'} color={'#FFB6C1'} />
-            </LegendRow>
-        </LegendWrapper>
+                <Grid item>
+                    <Typography variant="caption">多</Typography>
+                </Grid>
+            </Grid>
+            <Grid container alignItems="center" spacing={1} sx={{ marginTop: 1 }}>
+                <Grid item>
+                    <Typography variant="caption">予約不可</Typography>
+                </Grid>
+                <Grid item>
+                    <Box sx={{
+                        width: 20,
+                        height: 20,
+                        backgroundColor: colors[5], // 予約不可の色（赤色）
+                        borderRadius: '4px',
+                    }} />
+                </Grid>
+            </Grid>
+        </Box>
     );
 };
 
 
-export { ScheduleCell, ScheduleRow, ActivityLegend };
+const ActivityCalendar: React.FC<ActivityCalendarProps> = ({ scheduleData }) => {
+    return (
+        <Container>
+            <Grid container direction="column" spacing={2}>
+                {scheduleData.map((data, index) => (
+                    <Grid item key={index}>
+                        <ScheduleRow cellStatuses={data.cellStatuses} dayLabels={data.dayLabels} rowLabel={data.rowLabel} />
+                    </Grid>
+                ))}
+                <Grid item>
+                    <ActivityLegend />
+                </Grid>
+            </Grid>
+        </Container>
+    );
+};
+
+export { ActivityCalendar };
