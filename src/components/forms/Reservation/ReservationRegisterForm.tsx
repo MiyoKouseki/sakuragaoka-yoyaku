@@ -1,6 +1,6 @@
 // ReservationRegisterForm.tsx
 import React, { useEffect, useState } from 'react';
-import { TextField, Button, Box, Container } from '@mui/material';
+import { Button, Box, Container } from '@mui/material';
 import { setDoc, doc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,8 @@ import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { generateHash } from '../../../utils/generateHash';
 import { Timestamp } from 'firebase/firestore';
+import { DateTimeSelector } from '../../../components/selectors/DateSelector';
+
 
 const ReservationRegisterForm: React.FC = () => {
     const [rooms, setRooms] = useState<{ id: string, name: string }[]>([]);
@@ -15,8 +17,8 @@ const ReservationRegisterForm: React.FC = () => {
 
     const [roomName, setRoomName] = useState<string>('');
     const [organizationName, setOrganizationName] = useState<string>('');
-    const [startTime, setStartTime] = useState<string>('');
-    const [endTime, setEndTime] = useState<string>('');
+    const [startTime, setStartTime] = useState<string | null>('');
+    const [endTime, setEndTime] = useState<string | null>('');
     const navigate = useNavigate();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -38,7 +40,7 @@ const ReservationRegisterForm: React.FC = () => {
             setOrganizationName('');
             setStartTime('');
             setEndTime('');
-            navigate('/yoyaku'); // 適切なリダイレクト先に変更
+            navigate('/'); // 適切なリダイレクト先に変更
         } catch (error: unknown) {
             let errorMessage = '予約登録中にエラーが発生しました';
             if (error instanceof Error) {
@@ -68,6 +70,25 @@ const ReservationRegisterForm: React.FC = () => {
         fetchRoomsAndOrganizations();
     }, []);
 
+    const handleStartDateTimeChange = (date: Date | null) => {
+        if (date) {
+            const offset = date.getTimezoneOffset();
+            const adjustedDate = new Date(date.getTime() - (offset * 60000));
+            setStartTime(adjustedDate.toISOString().slice(0, 16)); // Date オブジェクトを文字列に変換
+        } else {
+            setStartTime(null);
+        }
+    };
+
+    const handleEndDateTimeChange = (date: Date | null) => {
+        if (date) {
+            const offset = date.getTimezoneOffset();
+            const adjustedDate = new Date(date.getTime() - (offset * 60000));
+            setEndTime(adjustedDate.toISOString().slice(0, 16)); // Date オブジェクトを文字列に変換
+        } else {
+            setEndTime(null);
+        }
+    };
 
     return (
         <Container maxWidth="sm">
@@ -100,29 +121,13 @@ const ReservationRegisterForm: React.FC = () => {
                         ))}
                     </Select>
                 </FormControl>
-                <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="startTime"
-                    label="開始時刻"
-                    name="startTime"
-                    type="datetime-local"
-                    InputLabelProps={{ shrink: true }}
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
+                <DateTimeSelector
+                    selectedDateTime={startTime ? new Date(startTime) : null} // 文字列を Date オブジェクトに変換
+                    onSelectDateTime={handleStartDateTimeChange}
                 />
-                <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="endTime"
-                    label="終了時刻"
-                    name="endTime"
-                    type="datetime-local"
-                    InputLabelProps={{ shrink: true }}
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
+                <DateTimeSelector
+                    selectedDateTime={endTime ? new Date(endTime) : null} // 文字列を Date オブジェクトに変換
+                    onSelectDateTime={handleEndDateTimeChange}
                 />
                 <Button
                     type="submit"

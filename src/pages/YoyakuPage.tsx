@@ -4,7 +4,7 @@ import { Grid, Typography } from '@mui/material';
 import SimpleCalendar from '../components/calendarFeatures/SimpleCalendar';
 import BuildingSelector from '../components/selectors/BuildingSelector';
 import RoomSelector from '../components/selectors/RoomSelector';
-import DateSelector from '../components/selectors/DateSelector';
+import { DateSelector } from '../components/selectors/DateSelector';
 import { reducer } from '../reducers/reservationReducer';
 import { rooms } from '../data/buildingData';
 import { PayloadType } from '../types/reservationActions';
@@ -78,7 +78,7 @@ const YoyakuPage: React.FC = () => {
                     <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
                         {state.reservations.length} 件の予約が見つかりました。
                     </Typography>
-                </Grid>            
+                </Grid>
             </Grid>
             <Grid item xs={2}>
             </Grid>
@@ -88,7 +88,7 @@ const YoyakuPage: React.FC = () => {
                         date={state.selectedDate ? new Date(state.selectedDate) : new Date()}
                         reservations={state.reservations}
                     />
-                </Grid>            
+                </Grid>
             </Grid>
         </Grid >
     );
