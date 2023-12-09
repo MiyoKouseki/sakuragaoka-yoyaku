@@ -1,28 +1,28 @@
 import React from 'react';
-import { Container, Box, Typography, Grid } from '@mui/material';
+import { Container, Box, Typography, Grid, Divider } from '@mui/material';
 
 // ScheduleCellコンポーネントの定義
 type ScheduleCellProps = {
     scheduleStatus: number;
-    dayLabel?: string;
+    label: string;
 };
 
 // ScheduleRowコンポーネントの定義
 type ScheduleRowProps = {
     cellStatuses: number[];
-    dayLabels?: string[];
     rowLabel?: string;
+    dayLabels: string[];
 };
 
 export type ScheduleData = {
     rowLabel: string;
     cellStatuses: number[];
-    dayLabels?: string[];
+    dayLabels: string[];
 };
 
 type ActivityCalendarProps = {
     scheduleData: ScheduleData[]; // 複数のスケジュールデータを受け取る
-}; 
+};
 
 // 凡例の色定義
 const colors: { [key: number]: string } = {
@@ -32,36 +32,6 @@ const colors: { [key: number]: string } = {
     3: '#30A14E',
     4: '#216E39',
     5: '#FFB6C1', // 予定が埋まっている（淡い赤色）
-};
-
-const ScheduleCell: React.FC<ScheduleCellProps> = ({ scheduleStatus, dayLabel }) => {
-    return (
-        <Box sx={{ marginBottom: 1 }}>
-            <Box sx={{
-                width: 30,
-                height: 30,
-                backgroundColor: colors[scheduleStatus] || 'transparent',
-                borderRadius: '4px'
-            }} />
-        </Box>
-    );
-};
-
-const ScheduleRow: React.FC<ScheduleRowProps> = ({ cellStatuses, rowLabel }) => {
-    return (
-        <Grid container alignItems="center" spacing={1}>
-            {rowLabel && (
-                <Grid item sx={{ display: 'flex', alignItems: 'center', height: 30 }}>
-                    <Typography>{rowLabel}</Typography>
-                </Grid>
-            )}
-            {cellStatuses.map((status, index) => (
-                <Grid item key={index}>
-                    <ScheduleCell scheduleStatus={status} />
-                </Grid>
-            ))}
-        </Grid>
-    );
 };
 
 const ActivityLegend: React.FC = () => {
@@ -77,8 +47,8 @@ const ActivityLegend: React.FC = () => {
                 {Object.entries(colors).slice(0, -1).map(([status, color], index) => (
                     <Grid item key={index}>
                         <Box sx={{
-                            width: 20,
-                            height: 20,
+                            width: 15,
+                            height: 15,
                             backgroundColor: color,
                             borderRadius: '4px',
                         }} />
@@ -94,8 +64,8 @@ const ActivityLegend: React.FC = () => {
                 </Grid>
                 <Grid item>
                     <Box sx={{
-                        width: 20,
-                        height: 20,
+                        width: 15,
+                        height: 15,
                         backgroundColor: colors[5], // 予約不可の色（赤色）
                         borderRadius: '4px',
                     }} />
@@ -105,21 +75,75 @@ const ActivityLegend: React.FC = () => {
     );
 };
 
+const ScheduleCell: React.FC<ScheduleCellProps> = ({ scheduleStatus , label}) => {
+    return (
+        <Box
+            sx={{
+                flexGrow: 1, // セルが利用可能なスペースを均等に埋めるように設定
+                width: 40,
+                height: 30,
+                backgroundColor: colors[scheduleStatus] || 'transparent',
+                borderRadius: '4px',
+                display: 'flex', // 追加
+                alignItems: 'center', // 追加
+                justifyContent: 'center', // 追加
+            }}
+        >
+            <Typography variant="caption">{label}</Typography>
+        </Box>
+    );
+};
+
+
+const ScheduleRow: React.FC<ScheduleRowProps> = ({ cellStatuses, dayLabels }) => {
+    return (
+        <Grid container alignItems="center" spacing={1}>
+            {cellStatuses.map((status, index) => (
+                <Grid item key={index}>
+                    <ScheduleCell scheduleStatus={status} label={dayLabels[index]} />
+                </Grid>
+            ))}
+        </Grid>
+    );
+};
+
+
+
+const DayLabelsRow: React.FC<{ dayLabels: string[] }> = ({ dayLabels }) => {
+    return (
+        <Grid container alignItems="center" spacing={1}>
+            {dayLabels.map((label, index) => (
+                <Grid item key={index} style={{ width: 40, textAlign: 'center' }}>
+                    <Typography>{label}</Typography>
+                </Grid>
+            ))}
+        </Grid>
+    );
+};
+
 
 const ActivityCalendar: React.FC<ActivityCalendarProps> = ({ scheduleData }) => {
     return (
         <Container>
-            <Grid container direction="column" spacing={2}>
+            <Grid container direction="column" spacing={0}>
                 {scheduleData.map((data, index) => (
-                    <Grid item key={index}>
-                        <ScheduleRow cellStatuses={data.cellStatuses} dayLabels={data.dayLabels} rowLabel={data.rowLabel} />
+                    <Grid item key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Grid item xs={2}>
+                            {data.rowLabel && (
+                                <Typography>{data.rowLabel}</Typography>
+                            )}
+                        </Grid>
+                        <Grid item xs={10}>
+                            <ScheduleRow cellStatuses={data.cellStatuses} dayLabels={data.dayLabels}/>
+                        </Grid>
                     </Grid>
                 ))}
-                <Grid item>
-                    <ActivityLegend />
-                </Grid>
             </Grid>
-        </Container>
+            <Divider sx={{ my: 2 }} />
+            <Grid item>
+                <ActivityLegend />
+            </Grid>
+        </Container >
     );
 };
 

@@ -22,7 +22,7 @@ const WelcomeComponent: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       const startDate = new Date('2023-12-09');
-      const rooms = ['第2会議室', '体育室A面', '体育室B面', '部屋A']; // ここに必要な場所のリストを追加
+      const rooms = ['第2会議室', '体育室A面', '体育室B面', '部屋A', '部屋B']; // ここに必要な場所のリストを追加
       const newScheduleData: ScheduleData[] = [];
 
       for (const room of rooms) {
@@ -36,12 +36,14 @@ const WelcomeComponent: React.FC = () => {
 
           const score = await evaluateBookingTime(room, dateString);
           cellStatuses.push(score);
-          dayLabels.push((i + 1).toString());
+          const dayLabelString = `${date.getMonth() + 1}/${date.getDate() < 10 ? '0' : ''}${date.getDate()}`;
+          dayLabels.push(dayLabelString);
         }
 
         newScheduleData.push({
           rowLabel: room,
           cellStatuses,
+          dayLabels,
         });
       }
 
